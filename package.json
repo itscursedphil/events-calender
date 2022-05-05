@@ -1,0 +1,28 @@
+{
+  "name": "events-calender",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "clean": "lerna run clean && lerna clean --yes",
+    "prepare": "npm run clean && lerna bootstrap",
+    "develop": "lerna run develop --stream --parallel",
+    "develop:backend": "lerna run --scope @events-calender/backend develop --stream",
+    "develop:frontend": "lerna run --scope @events-calender/frontend develop --stream",
+    "start": "lerna run start --stream --parallel",
+    "start:backend": "lerna run --scope @events-calender/backend start --stream",
+    "start:frontend": "lerna run --scope @events-calender/frontend start --stream",
+    "build": "lerna run build --stream --parallel",
+    "build:backend": "lerna run --scope @events-calender/backend build --stream",
+    "build:frontend": "lerna run --scope @events-calender/frontend build --stream"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@t3n/eslint-config": "^6.0.2",
+    "@t3n/eslint-config-react": "^6.0.2",
+    "@t3n/eslint-config-typescript": "^6.0.2",
+    "lerna": "^4.0.0",
+    "typescript": "^4.6.4"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_location_addresses",
+  "info": {
+    "displayName": "address",
+    "icon": "address-book",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "street": {
+      "type": "string",
+      "required": true
+    },
+    "streetNumber": {
+      "type": "string",
+      "required": true
+    },
+    "postcode": {
+      "type": "integer",
+      "min": 30000,
+      "max": 31999,
+      "required": true
+    }
+  }
+}

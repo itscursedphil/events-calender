@@ -1,0 +1,11 @@
+node_modules
+
+/packages/backend/docker-compose.yml
+/packages/backend/.env
+/packages/backend/.tmp
+/packages/backend/.data
+/packages/backend/dist
+/packages/backend/public/uploads/*
+!/packages/backend/public/uploads/.gitkeep
+
+/packages/frontend/.next

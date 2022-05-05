@@ -1,0 +1,7 @@
+{
+  "extends": [
+    "@t3n/eslint-config",
+    "@t3n/eslint-config-react",
+    "next/core-web-vitals"
+  ]
+}
