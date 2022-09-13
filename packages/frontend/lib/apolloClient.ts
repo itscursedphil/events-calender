@@ -3,7 +3,6 @@ import {
   ApolloClient,
   HttpLink,
   InMemoryCache,
-  NormalizedCache,
   NormalizedCacheObject,
 } from '@apollo/client';
 import config from './config';
@@ -63,7 +62,7 @@ export const initializeApollo = (
 
 export const addApolloState = (
   client: ApolloClient<NormalizedCacheObject>,
-  pageProps: AppProps['pageProps']
+  pageProps: AppProps<{ props: any }>['pageProps']
 ) => {
   if (pageProps?.props) {
     pageProps.props[APOLLO_STATE_PROP_NAME] = client.cache.extract();
@@ -72,7 +71,7 @@ export const addApolloState = (
   return pageProps;
 };
 
-export const useApollo = (pageProps: AppProps['pageProps']) => {
+export const useApollo = (pageProps: AppProps<any>['pageProps']) => {
   const state = pageProps[APOLLO_STATE_PROP_NAME];
   const store = useMemo(() => initializeApollo(state), [state]);
   return store;
