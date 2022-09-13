@@ -1,5 +1,5 @@
 {
-  "name": "@events-calender/backend",
+  "name": "@events-calendar/backend",
   "private": true,
   "version": "0.1.0",
   "description": "A Strapi application",
@@ -11,9 +11,11 @@
     "strapi": "strapi"
   },
   "dependencies": {
+    "@strapi/plugin-graphql": "^4.2.0-beta.2",
     "@strapi/plugin-i18n": "4.2.0-beta.2",
     "@strapi/plugin-users-permissions": "4.2.0-beta.2",
     "@strapi/strapi": "4.2.0-beta.2",
+    "config": "^3.3.7",
     "mysql": "^2.18.1"
   },
   "author": {

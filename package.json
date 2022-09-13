@@ -1,5 +1,5 @@
 {
-  "name": "events-calender",
+  "name": "events-calendar",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,14 +7,14 @@
     "clean": "lerna run clean && lerna clean --yes",
     "prepare": "npm run clean && lerna bootstrap",
     "develop": "lerna run develop --stream --parallel",
-    "develop:backend": "lerna run --scope @events-calender/backend develop --stream",
-    "develop:frontend": "lerna run --scope @events-calender/frontend develop --stream",
+    "develop:backend": "lerna run --scope @events-calendar/backend develop --stream",
+    "develop:frontend": "lerna run --scope @events-calendar/frontend develop --stream",
     "start": "lerna run start --stream --parallel",
-    "start:backend": "lerna run --scope @events-calender/backend start --stream",
-    "start:frontend": "lerna run --scope @events-calender/frontend start --stream",
+    "start:backend": "lerna run --scope @events-calendar/backend start --stream",
+    "start:frontend": "lerna run --scope @events-calendar/frontend start --stream",
     "build": "lerna run build --stream --parallel",
-    "build:backend": "lerna run --scope @events-calender/backend build --stream",
-    "build:frontend": "lerna run --scope @events-calender/frontend build --stream"
+    "build:backend": "lerna run --scope @events-calendar/backend build --stream",
+    "build:frontend": "lerna run --scope @events-calendar/frontend build --stream"
   },
   "author": "",
   "license": "ISC",

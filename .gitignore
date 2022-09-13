@@ -1,9 +1,14 @@
 node_modules
 
+**/env/development.json
+**/env/production.json
+
 /packages/backend/docker-compose.yml
 /packages/backend/.env
 /packages/backend/.tmp
 /packages/backend/.data
+/packages/backend/.cache
+/packages/backend/database
 /packages/backend/dist
 /packages/backend/public/uploads/*
 !/packages/backend/public/uploads/.gitkeep
