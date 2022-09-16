@@ -17,6 +17,7 @@
     "@strapi/plugin-users-permissions": "^4.3.8",
     "@strapi/strapi": "^4.3.8",
     "config": "^3.3.8",
+    "cookie": "^0.5.0",
     "mysql": "^2.18.1"
   },
   "author": {
@@ -29,5 +30,8 @@
     "node": ">=12.x.x <=16.x.x",
     "npm": ">=6.0.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@types/cookie": "^0.5.1"
+  }
 }
