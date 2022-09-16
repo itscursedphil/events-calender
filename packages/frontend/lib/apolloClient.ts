@@ -13,13 +13,26 @@ export const APOLLO_STATE_PROP_NAME = '__APOLLO_STATE__';
 
 let apolloClient: ApolloClient<NormalizedCacheObject>;
 
-const createApolloClient = () => {
+const getClientJwt = () => {
+  if (typeof window === 'undefined') return undefined;
+
+  const clientJwt = window.localStorage.getItem('');
+
+  if (!clientJwt) return undefined;
+
+  return `Bearer ${clientJwt}`;
+};
+
+export const createApolloClient = (jwt?: string) => {
   return new ApolloClient({
     ssrMode: typeof window === 'undefined',
     link: new HttpLink({
       uri: (typeof window === 'undefined' ? config : getClientSideConfig()).api
         .endpoint,
-      credentials: 'same-origin',
+      credentials: 'include',
+      // headers: {
+      //   Authorization: jwt ? `Bearer ${jwt}` : getClientJwt(),
+      // },
     }),
     cache: new InMemoryCache(),
   });

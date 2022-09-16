@@ -1,5 +1,8 @@
 {
   "api": {
     "endpoint": ""
+  },
+  "authentication": {
+    "cookie": "events_user"
   }
 }

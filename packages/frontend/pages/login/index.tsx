@@ -9,14 +9,14 @@ import {
   Input,
   VStack,
 } from '@chakra-ui/react';
-import { ErrorMessage, Field, Form, Formik, useFormik } from 'formik';
+import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { NextPage } from 'next';
 import Head from 'next/head';
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '../../components/Header';
 import Main from '../../components/Main';
 import * as Yup from 'yup';
-import { useLoginMutation } from '../../generated/graphql';
+import { LoginResponseData } from '../api/login';
 
 interface LoginFormValues {
   email: string;
@@ -35,15 +35,34 @@ const validationSchema = Yup.object().shape({
   password: Yup.string().required('Bitte gib ein Passwort ein'),
 });
 
+const useLogin = (): [
+  (identifier: string, password: string) => any,
+  { loading: boolean }
+] => {
+  const [loading, setLoading] = useState(false);
+
+  const login = async (identifier: string, password: string) => {
+    setLoading(true);
+
+    await fetch('/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ identifier, password }),
+    });
+
+    setLoading(false);
+  };
+
+  return [login, { loading }];
+};
+
 const LoginPage: NextPage = () => {
-  const [login, { loading }] = useLoginMutation();
+  const [login, { loading }] = useLogin();
 
   const handleFormSubmit = async (values: LoginFormValues) => {
-    console.log(JSON.stringify(values, null, 2));
-    const res = await login({
-      variables: { email: values.email, password: values.password },
-    });
-    console.log(res.data);
+    await login(values.email, values.password);
   };
 
   return (

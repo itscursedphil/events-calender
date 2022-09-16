@@ -1,5 +1,8 @@
 {
   "api": {
     "endpoint": "API_ENDPOINT"
+  },
+  "authentication": {
+    "cookie": "AUTHENTICATION_COOKIE"
   }
 }
