@@ -1,4 +1,5 @@
 import create from 'zustand';
+import { devtools } from 'zustand/middleware';
 
 import {
   CurrentUserDocument,
@@ -41,68 +42,73 @@ const persistUserToLocalStorage = (user: CurrentUser) => {
   window.localStorage.setItem(storageKey, window.btoa(JSON.stringify(user)));
 };
 
-const useCurrentUserStore = create<CurrentUserStore>((set) => {
-  const apolloClient = createApolloClient();
-  // const initialUser = getUserFromLocalStorage();
+const useCurrentUserStore = create(
+  devtools<CurrentUserStore>(
+    (set) => {
+      const apolloClient = createApolloClient();
+      // const initialUser = getUserFromLocalStorage();
 
-  return {
-    user: null,
-    initialized: false,
-    loading: false,
-    setUser: (user) => {
-      if (user) {
-        persistUserToLocalStorage(user);
-      } else {
-        window.localStorage.removeItem(storageKey);
-      }
-
-      set({ user, initialized: true });
-    },
-    fetchUser: async () => {
-      set({
-        loading: true,
-      });
-
-      try {
-        const { data } = await apolloClient.query<
-          CurrentUserQuery,
-          CurrentUserQueryVariables
-        >({
-          query: CurrentUserDocument,
-          fetchPolicy: 'network-only',
-        });
-
-        if (!data?.me) {
-          throw new Error('Could not authenticate user');
-        }
-
-        const userData = {
-          id: data.me.id,
-          username: data.me.username,
-          email: data.me.email || '',
-        };
-
-        persistUserToLocalStorage(userData);
-
-        set({
-          user: userData,
-          loading: false,
-          initialized: true,
-        });
-      } catch (err) {
-        window.localStorage.removeItem(storageKey);
-        return set({ user: null, loading: false, initialized: true });
-      }
-    },
-    resetUser: () => {
-      window.localStorage.removeItem(storageKey);
-
-      set({
+      return {
         user: null,
-        initialized: true,
-      });
+        initialized: false,
+        loading: false,
+        setUser: (user) => {
+          if (user) {
+            persistUserToLocalStorage(user);
+          } else {
+            window.localStorage.removeItem(storageKey);
+          }
+
+          set({ user, initialized: true });
+        },
+        fetchUser: async () => {
+          set({
+            loading: true,
+          });
+
+          try {
+            const { data } = await apolloClient.query<
+              CurrentUserQuery,
+              CurrentUserQueryVariables
+            >({
+              query: CurrentUserDocument,
+              fetchPolicy: 'network-only',
+            });
+
+            if (!data?.me) {
+              throw new Error('Could not authenticate user');
+            }
+
+            const userData = {
+              id: data.me.id,
+              username: data.me.username,
+              email: data.me.email || '',
+            };
+
+            persistUserToLocalStorage(userData);
+
+            set({
+              user: userData,
+              loading: false,
+              initialized: true,
+            });
+          } catch (err) {
+            window.localStorage.removeItem(storageKey);
+            set({ user: null, loading: false, initialized: true });
+          }
+        },
+        resetUser: () => {
+          window.localStorage.removeItem(storageKey);
+
+          set({
+            user: null,
+            initialized: true,
+          });
+        },
+      };
     },
-  };
-});
+    { name: 'CurrentUserStore' }
+  )
+);
 
 export default useCurrentUserStore;
