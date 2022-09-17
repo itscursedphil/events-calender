@@ -1,7 +1,8 @@
+import React from 'react';
 import { Heading } from '@chakra-ui/react';
 import { NextPage } from 'next';
 import Head from 'next/head';
-import React from 'react';
+
 import { useCurrentUserQuery, useEventsQuery } from '../../generated/graphql';
 
 const EventsPage: NextPage = () => {

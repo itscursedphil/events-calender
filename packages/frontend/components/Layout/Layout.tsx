@@ -1,10 +1,11 @@
+import React, { PropsWithChildren } from 'react';
 import { Container } from '@chakra-ui/react';
 import Head from 'next/head';
-import React from 'react';
+
 import Header from '../Header';
 import Main from '../Main';
 
-const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+const Layout: React.FC<PropsWithChildren> = ({ children }) => (
   <div>
     <Head>
       <link rel="icon" href="/favicon.ico" />

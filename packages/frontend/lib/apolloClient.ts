@@ -1,13 +1,14 @@
-import { getClientSideConfig } from './../hooks/useConfig';
+import { useMemo } from 'react';
 import {
   ApolloClient,
   HttpLink,
   InMemoryCache,
   NormalizedCacheObject,
 } from '@apollo/client';
-import config from './config';
 import { AppProps } from 'next/app';
-import { useMemo } from 'react';
+
+import { getClientSideConfig } from '../hooks/useConfig';
+import config from './config';
 
 export const APOLLO_STATE_PROP_NAME = '__APOLLO_STATE__';
 
@@ -41,6 +42,7 @@ export const createApolloClient = (jwt?: string) => {
 export const initializeApollo = (
   initialState: NormalizedCacheObject | null = null
 ): ApolloClient<NormalizedCacheObject> => {
+  // eslint-disable-next-line no-underscore-dangle
   const _apolloClient = apolloClient ?? createApolloClient();
 
   // If your page has Next.js data fetching methods that use Apollo Client, the initial state
@@ -78,6 +80,7 @@ export const addApolloState = (
   pageProps: AppProps<{ props: any }>['pageProps']
 ) => {
   if (pageProps?.props) {
+    // eslint-disable-next-line no-param-reassign
     pageProps.props[APOLLO_STATE_PROP_NAME] = client.cache.extract();
   }
 

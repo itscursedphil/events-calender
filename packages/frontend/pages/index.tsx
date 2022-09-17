@@ -1,6 +1,8 @@
+import React from 'react';
 import { Heading } from '@chakra-ui/react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
+
 import useCurrentUserStore from '../hooks/useCurrentUser';
 
 const Home: NextPage = () => {

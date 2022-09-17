@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import {
   Box,
   Button,
@@ -11,11 +12,11 @@ import {
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { NextPage } from 'next';
 import Head from 'next/head';
-import React, { useState } from 'react';
-import * as Yup from 'yup';
-import { LoginResponseData, LoginSuccessResponseData } from '../api/login';
-import useCurrentUserStore from '../../hooks/useCurrentUser';
 import { useRouter } from 'next/router';
+import * as Yup from 'yup';
+
+import useCurrentUserStore from '../../hooks/useCurrentUser';
+import { LoginResponseData, LoginSuccessResponseData } from '../api/login';
 
 interface LoginFormValues {
   email: string;

@@ -1,11 +1,13 @@
-import type { AppProps } from 'next/app';
-import { ChakraProvider } from '@chakra-ui/react';
+import React from 'react';
 import { ApolloProvider } from '@apollo/client';
+import { ChakraProvider } from '@chakra-ui/react';
+import type { AppProps } from 'next/app';
+
+import App from '../components/App';
 import { useApollo } from '../lib/apolloClient';
 import theme from '../lib/theme';
-import App from '../components/App';
 
-function MyApp({ Component, pageProps }: AppProps) {
+const MyApp = ({ Component, pageProps }: AppProps) => {
   const apolloClient = useApollo(pageProps);
 
   return (
@@ -17,6 +19,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       </ChakraProvider>
     </ApolloProvider>
   );
-}
+};
 
 export default MyApp;

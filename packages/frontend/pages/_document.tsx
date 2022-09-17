@@ -1,9 +1,11 @@
+import React from 'react';
 import { ColorModeScript } from '@chakra-ui/react';
-import { Html, Head, Main, NextScript } from 'next/document';
+import { Head, Html, Main, NextScript } from 'next/document';
+
 import config from '../lib/config';
 import theme from '../lib/theme';
 
-export default function Document() {
+const Document = () => {
   const appConfig = JSON.stringify({
     api: {
       endpoint: config.api.endpoint,
@@ -16,8 +18,9 @@ export default function Document() {
         <script
           id="APP_CONFIG"
           type="application/json"
+          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: appConfig }}
-        ></script>
+        />
       </Head>
       <body>
         <ColorModeScript initialColorMode={theme.config.initialColorMode} />
@@ -26,4 +29,6 @@ export default function Document() {
       </body>
     </Html>
   );
-}
+};
+
+export default Document;

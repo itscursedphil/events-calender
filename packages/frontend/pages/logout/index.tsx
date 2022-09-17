@@ -1,8 +1,9 @@
+import React, { useEffect } from 'react';
 import { Heading } from '@chakra-ui/react';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React, { useEffect } from 'react';
+
 import useCurrentUserStore from '../../hooks/useCurrentUser';
 
 const logout = async () => {
@@ -16,6 +17,7 @@ const LogoutPage: NextPage = () => {
   useEffect(() => {
     resetUser();
     logout().then(() => router.push('/'));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { PropsWithChildren, useEffect } from 'react';
+
 import useCurrentUserStore from '../../hooks/useCurrentUser';
 import Layout from '../Layout';
 
-const App: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const App: React.FC<PropsWithChildren> = ({ children }) => {
   const { user, fetchUser } = useCurrentUserStore((state) => ({
     user: state.user,
     fetchUser: state.fetchUser,

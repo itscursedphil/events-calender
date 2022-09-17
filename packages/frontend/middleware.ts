@@ -1,6 +1,7 @@
-import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
+// eslint-disable-next-line import/prefer-default-export, consistent-return
 export const middleware = (req: NextRequest) => {
   // TODO: Dynamically get cookie name from config
   const authCookie = req.cookies.get('events_user');

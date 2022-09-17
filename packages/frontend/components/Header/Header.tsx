@@ -1,6 +1,9 @@
+// TODO: Fix lint warning
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import React from 'react';
 import { Box, Divider, Link, Skeleton } from '@chakra-ui/react';
 import NextLink from 'next/link';
-import React from 'react';
+
 import useCurrentUserStore from '../../hooks/useCurrentUser';
 
 const PageNav = () => (
@@ -16,7 +19,7 @@ const PageNav = () => (
       </NextLink>
       <NextLink href="/venues" passHref>
         <Link mr={3} display={['none', 'none', 'inline']}>
-          Venues
+          Orte
         </Link>
       </NextLink>
     </nav>

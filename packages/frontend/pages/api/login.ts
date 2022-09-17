@@ -1,11 +1,12 @@
+import { serialize } from 'cookie';
 import type { NextApiRequest, NextApiResponse } from 'next';
+
 import {
+  LoginDocument,
   LoginMutation,
   LoginMutationVariables,
-} from './../../generated/graphql';
-import { createApolloClient } from './../../lib/apolloClient';
-import { LoginDocument } from '../../generated/graphql';
-import { serialize } from 'cookie';
+} from '../../generated/graphql';
+import { createApolloClient } from '../../lib/apolloClient';
 import config from '../../lib/config';
 
 export interface LoginErrorResponseData {

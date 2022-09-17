@@ -1,11 +1,12 @@
-import { CurrentUserDocument } from './../generated/graphql';
+import create from 'zustand';
+
 import {
+  CurrentUserDocument,
   CurrentUserQuery,
   CurrentUserQueryVariables,
 } from '../generated/graphql';
-import create from 'zustand';
 import { createApolloClient } from '../lib/apolloClient';
-import config from '../lib/config';
+// import config from '../lib/config';
 
 export interface CurrentUser {
   id: string;

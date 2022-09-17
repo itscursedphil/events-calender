@@ -1,4 +1,9 @@
 {
   "root": true,
-  "extends": ["@t3n/eslint-config", "@t3n/eslint-config-react"]
+  "extends": [
+    "@t3n/eslint-config",
+    "@t3n/eslint-config-react",
+    "@t3n/eslint-config-typescript"
+  ],
+  "ignorePatterns": ["/generated"]
 }
