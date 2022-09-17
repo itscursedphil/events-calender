@@ -6,6 +6,7 @@ export interface API_CONFIG {
 
 export interface AUTHENTICATION_CONFIG {
   cookie: string;
+  storageKey: string;
 }
 
 export interface CONFIG {

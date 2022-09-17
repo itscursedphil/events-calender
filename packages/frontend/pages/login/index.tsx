@@ -16,7 +16,9 @@ import React, { useState } from 'react';
 import Header from '../../components/Header';
 import Main from '../../components/Main';
 import * as Yup from 'yup';
-import { LoginResponseData } from '../api/login';
+import { LoginResponseData, LoginSuccessResponseData } from '../api/login';
+import useCurrentUserStore from '../../hooks/useCurrentUser';
+import { useRouter } from 'next/router';
 
 interface LoginFormValues {
   email: string;
@@ -36,7 +38,10 @@ const validationSchema = Yup.object().shape({
 });
 
 const useLogin = (): [
-  (identifier: string, password: string) => any,
+  (
+    identifier: string,
+    password: string
+  ) => Promise<LoginSuccessResponseData['user'] | null>,
   { loading: boolean }
 ] => {
   const [loading, setLoading] = useState(false);
@@ -44,25 +49,46 @@ const useLogin = (): [
   const login = async (identifier: string, password: string) => {
     setLoading(true);
 
-    await fetch('/api/login', {
+    const res = await fetch('/api/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ identifier, password }),
     });
+    const data: LoginResponseData = await res.json();
 
     setLoading(false);
+
+    // TODO: Handle error case
+
+    if (res.ok && data.state === 'success') {
+      return data.user;
+    }
+
+    return null;
   };
 
   return [login, { loading }];
 };
 
 const LoginPage: NextPage = () => {
+  const router = useRouter();
   const [login, { loading }] = useLogin();
+  const setUser = useCurrentUserStore((state) => state.setUser);
 
+  // TODO: Improve
   const handleFormSubmit = async (values: LoginFormValues) => {
-    await login(values.email, values.password);
+    const user = await login(values.email, values.password);
+
+    if (user) {
+      setUser({
+        id: user.id,
+        email: user.email || '',
+        username: user.username,
+      });
+      router.push('/');
+    }
   };
 
   return (

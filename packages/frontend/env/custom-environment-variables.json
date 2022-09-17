@@ -3,6 +3,7 @@
     "endpoint": "API_ENDPOINT"
   },
   "authentication": {
-    "cookie": "AUTHENTICATION_COOKIE"
+    "cookie": "AUTHENTICATION_COOKIE",
+    "storageKey": "AUTHENTICATION_STORAGEKEY"
   }
 }

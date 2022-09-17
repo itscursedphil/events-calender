@@ -1,6 +1,7 @@
-import { Box, Divider, Link } from '@chakra-ui/react';
+import { Box, Divider, Link, Skeleton } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import React from 'react';
+import useCurrentUserStore from '../../hooks/useCurrentUser';
 
 const PageNav = () => (
   <Box display="flex">
@@ -22,13 +23,29 @@ const PageNav = () => (
   </Box>
 );
 
-const UserNav = () => (
-  <Box display="flex">
-    <NextLink href="/login" passHref>
-      <Link>Login</Link>
-    </NextLink>
-  </Box>
-);
+const UserNav = () => {
+  const { user, loading, initialized } = useCurrentUserStore((state) => ({
+    user: state.user,
+    loading: state.loading,
+    initialized: state.initialized,
+  }));
+
+  return (
+    <Box display="flex">
+      <Skeleton isLoaded={initialized && !loading}>
+        {user ? (
+          <NextLink href="/logout" passHref>
+            <Link>Logout</Link>
+          </NextLink>
+        ) : (
+          <NextLink href="/login" passHref>
+            <Link>Login</Link>
+          </NextLink>
+        )}
+      </Skeleton>
+    </Box>
+  );
+};
 
 const Header: React.FC = () => (
   <header>

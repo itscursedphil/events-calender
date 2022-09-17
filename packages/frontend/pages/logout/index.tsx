@@ -1,17 +1,23 @@
 import { Container, Heading } from '@chakra-ui/react';
 import { NextPage } from 'next';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 import Header from '../../components/Header';
 import Main from '../../components/Main';
+import useCurrentUserStore from '../../hooks/useCurrentUser';
 
 const logout = async () => {
   await fetch('/api/logout');
 };
 
-const RegisterPage: NextPage = () => {
+const LogoutPage: NextPage = () => {
+  const router = useRouter();
+  const resetUser = useCurrentUserStore((state) => state.resetUser);
+
   useEffect(() => {
-    logout();
+    resetUser();
+    logout().then(() => router.push('/'));
   }, []);
 
   return (
@@ -33,4 +39,4 @@ const RegisterPage: NextPage = () => {
   );
 };
 
-export default RegisterPage;
+export default LogoutPage;

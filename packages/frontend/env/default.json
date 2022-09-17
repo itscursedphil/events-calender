@@ -3,6 +3,7 @@
     "endpoint": ""
   },
   "authentication": {
-    "cookie": "events_user"
+    "cookie": "events_user",
+    "storageKey": "events_user"
   }
 }
