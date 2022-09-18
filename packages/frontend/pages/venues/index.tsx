@@ -21,25 +21,14 @@ import {
 } from '../../generated/graphql';
 import { addApolloState, createApolloClient } from '../../lib/apolloClient';
 import { createSlugFromString } from '../../lib/slug';
-import { Venue } from '../../lib/venue';
+import { mapVenueQueryResult, Venue } from '../../lib/venue';
 
 const initialQueryLimit = 20;
 
 const VenuesPage: NextPage = () => {
   const { data } = useVenuesQuery();
 
-  const venues: Venue[] = (data?.venues?.data || []).map((venue) => ({
-    id: venue.id as string,
-    name: venue.attributes?.name as string,
-    description: venue.attributes?.description ?? undefined,
-    website: venue.attributes?.website ?? undefined,
-    address: {
-      id: venue.attributes?.address.id as string,
-      street: venue.attributes?.address.street as string,
-      streetNumber: venue.attributes?.address.streetNumber as string,
-      postcode: venue.attributes?.address.postcode as number,
-    },
-  }));
+  const venues: Venue[] = (data?.venues?.data || []).map(mapVenueQueryResult);
 
   return (
     <>

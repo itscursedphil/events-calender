@@ -1306,6 +1306,21 @@ export type UpcomingEventsQueryVariables = Exact<{
 
 export type UpcomingEventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventEntityResponseCollection', data: Array<{ __typename?: 'EventEntity', id?: string | null, attributes?: { __typename?: 'Event', title: string, description: string, startDate: any, endDate?: any | null, doorsTime?: any | null, venue?: { __typename?: 'VenueEntityResponse', data?: { __typename?: 'VenueEntity', id?: string | null, attributes?: { __typename?: 'Venue', name: string } | null } | null } | null, category?: { __typename?: 'EventCategoryEntityResponse', data?: { __typename?: 'EventCategoryEntity', id?: string | null, attributes?: { __typename?: 'EventCategory', name: string, slug: string } | null } | null } | null } | null }>, meta: { __typename?: 'ResponseCollectionMeta', pagination: { __typename?: 'Pagination', total: number, page: number, pageSize: number, pageCount: number } } } | null };
 
+export type VenueQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type VenueQuery = { __typename?: 'Query', venue?: { __typename?: 'VenueEntityResponse', data?: { __typename?: 'VenueEntity', id?: string | null, attributes?: { __typename?: 'Venue', name: string, description?: string | null, website?: string | null, address: { __typename?: 'ComponentLocationAddress', id: string, street: string, streetNumber: string, postcode: number } } | null } | null } | null };
+
+export type VenuePathsQueryVariables = Exact<{
+  from?: InputMaybe<Scalars['Int']>;
+  limit?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type VenuePathsQuery = { __typename?: 'Query', venues?: { __typename?: 'VenueEntityResponseCollection', data: Array<{ __typename?: 'VenueEntity', id?: string | null, attributes?: { __typename?: 'Venue', name: string } | null }>, meta: { __typename?: 'ResponseCollectionMeta', pagination: { __typename?: 'Pagination', total: number, page: number, pageSize: number, pageCount: number } } } | null };
+
 export type VenuesQueryVariables = Exact<{
   from?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -1670,6 +1685,103 @@ export function useUpcomingEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type UpcomingEventsQueryHookResult = ReturnType<typeof useUpcomingEventsQuery>;
 export type UpcomingEventsLazyQueryHookResult = ReturnType<typeof useUpcomingEventsLazyQuery>;
 export type UpcomingEventsQueryResult = Apollo.QueryResult<UpcomingEventsQuery, UpcomingEventsQueryVariables>;
+export const VenueDocument = gql`
+    query Venue($id: ID!) {
+  venue(id: $id) {
+    data {
+      id
+      attributes {
+        name
+        description
+        website
+        address {
+          id
+          street
+          streetNumber
+          postcode
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useVenueQuery__
+ *
+ * To run a query within a React component, call `useVenueQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVenueQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVenueQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useVenueQuery(baseOptions: Apollo.QueryHookOptions<VenueQuery, VenueQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<VenueQuery, VenueQueryVariables>(VenueDocument, options);
+      }
+export function useVenueLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VenueQuery, VenueQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<VenueQuery, VenueQueryVariables>(VenueDocument, options);
+        }
+export type VenueQueryHookResult = ReturnType<typeof useVenueQuery>;
+export type VenueLazyQueryHookResult = ReturnType<typeof useVenueLazyQuery>;
+export type VenueQueryResult = Apollo.QueryResult<VenueQuery, VenueQueryVariables>;
+export const VenuePathsDocument = gql`
+    query VenuePaths($from: Int = 0, $limit: Int = 100) {
+  venues(pagination: {start: $from, limit: $limit}) {
+    data {
+      id
+      attributes {
+        name
+      }
+    }
+    meta {
+      pagination {
+        total
+        page
+        pageSize
+        pageCount
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useVenuePathsQuery__
+ *
+ * To run a query within a React component, call `useVenuePathsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVenuePathsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVenuePathsQuery({
+ *   variables: {
+ *      from: // value for 'from'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useVenuePathsQuery(baseOptions?: Apollo.QueryHookOptions<VenuePathsQuery, VenuePathsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<VenuePathsQuery, VenuePathsQueryVariables>(VenuePathsDocument, options);
+      }
+export function useVenuePathsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VenuePathsQuery, VenuePathsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<VenuePathsQuery, VenuePathsQueryVariables>(VenuePathsDocument, options);
+        }
+export type VenuePathsQueryHookResult = ReturnType<typeof useVenuePathsQuery>;
+export type VenuePathsLazyQueryHookResult = ReturnType<typeof useVenuePathsLazyQuery>;
+export type VenuePathsQueryResult = Apollo.QueryResult<VenuePathsQuery, VenuePathsQueryVariables>;
 export const VenuesDocument = gql`
     query Venues($from: Int = 0, $limit: Int = 20, $ids: [ID]) {
   venues(filters: {id: {or: $ids}}, pagination: {start: $from, limit: $limit}) {

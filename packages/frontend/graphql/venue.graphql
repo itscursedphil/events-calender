@@ -1,0 +1,18 @@
+query Venue($id: ID!) {
+  venue(id: $id) {
+    data {
+      id
+      attributes {
+        name
+        description
+        website
+        address {
+          id
+          street
+          streetNumber
+          postcode
+        }
+      }
+    }
+  }
+}

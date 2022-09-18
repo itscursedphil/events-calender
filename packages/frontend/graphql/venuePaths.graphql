@@ -1,0 +1,18 @@
+query VenuePaths($from: Int = 0, $limit: Int = 100) {
+  venues(pagination: { start: $from, limit: $limit }) {
+    data {
+      id
+      attributes {
+        name
+      }
+    }
+    meta {
+      pagination {
+        total
+        page
+        pageSize
+        pageCount
+      }
+    }
+  }
+}
