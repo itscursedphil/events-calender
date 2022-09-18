@@ -1,9 +1,11 @@
 import React from 'react';
-import { Heading } from '@chakra-ui/react';
+import { Badge, Box, Heading, Stack, Text } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import Head from 'next/head';
 
+import { EventStartDateWithIcon } from '../../components/Event';
+import { VenueLinkWithIcon } from '../../components/Venue';
 import {
   EventDocument,
   EventPathsDocument,
@@ -16,14 +18,30 @@ import { addApolloState, createApolloClient } from '../../lib/apolloClient';
 import { Event, mapEventQueryResult } from '../../lib/event';
 import { createSlugFromString, getIdFromSlug } from '../../lib/slug';
 
-const EventPage: NextPage<Event> = ({ title }) => (
+const EventPage: NextPage<Event> = ({
+  title,
+  description,
+  startDate,
+  venue,
+  category,
+}) => (
   <>
     <Head>
-      <title>Event</title>
+      <title>{title}</title>
     </Head>
+    <Box mb={2}>
+      <Badge>{category.name}</Badge>
+    </Box>
     <Heading as="h2" size="lg">
       {title}
     </Heading>
+    <Box my={4}>
+      <Stack spacing={2}>
+        <EventStartDateWithIcon startDate={startDate} />
+        <VenueLinkWithIcon {...venue} />
+      </Stack>
+    </Box>
+    <Text>{description}</Text>
   </>
 );
 

@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
-import { FiClock, FiMapPin } from 'react-icons/fi';
 import {
   Badge,
   Box,
   Divider,
   Heading,
-  Icon,
-  Link,
   LinkBox,
   LinkOverlay,
   Select,
@@ -18,6 +15,8 @@ import { GetStaticProps, NextPage } from 'next';
 import Head from 'next/head';
 import NextLink from 'next/link';
 
+import { EventStartDateWithIcon } from '../../components/Event';
+import { VenueLinkWithIcon } from '../../components/Venue';
 import {
   EventCategoriesDocument,
   EventCategoriesQuery,
@@ -90,24 +89,8 @@ const EventItemMeta: React.FC<Pick<UpcomingEvent, 'startDate' | 'venue'>> = ({
   venue,
 }) => (
   <Stack direction="row" spacing={4}>
-    <Stack direction="row" align="center" spacing={1}>
-      <Icon as={FiClock} />
-      <Text as="span" fontSize="sm">
-        {dayjs(startDate).format('H:mm')}
-      </Text>
-    </Stack>
-    <Stack direction="row" align="center" spacing={1}>
-      <Icon as={FiMapPin} />
-      <Text as="span" fontSize="sm">
-        <NextLink
-          href={`/venues/${createSlugFromString(venue.name, venue.id)}`}
-          passHref
-        >
-          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-          <Link>{venue.name}</Link>
-        </NextLink>
-      </Text>
-    </Stack>
+    <EventStartDateWithIcon startDate={startDate} />
+    <VenueLinkWithIcon {...venue} />
   </Stack>
 );
 
