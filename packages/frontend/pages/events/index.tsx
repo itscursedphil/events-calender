@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import { FiClock, FiMapPin } from 'react-icons/fi';
 import {
   Badge,
   Box,
   Divider,
   Heading,
+  Icon,
+  Link,
   Select,
   Stack,
   Text,
@@ -11,6 +14,7 @@ import {
 import dayjs from 'dayjs';
 import { GetStaticProps, NextPage } from 'next';
 import Head from 'next/head';
+import NextLink from 'next/link';
 
 import {
   EventCategoriesDocument,
@@ -99,6 +103,62 @@ const EventCategoryDropdown: React.FC<{
   );
 };
 
+const createSlugFromString = (str: string, id: string) => {
+  const parsedStr = str
+    .split(' ')
+    .map((part) => part.replace(/[^A-Za-z0-9]/g, ''))
+    .join('-')
+    .toLowerCase();
+
+  return `${parsedStr}-${id}`;
+};
+
+const EventItemHeader: React.FC<Pick<UpcomingEvent, 'title' | 'category'>> = ({
+  title,
+  category,
+}) => (
+  <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+    <Heading as="h3" size="md">
+      {title}
+    </Heading>
+    <Badge>{category.name}</Badge>
+  </Box>
+);
+
+const EventItemMeta: React.FC<Pick<UpcomingEvent, 'startDate' | 'venue'>> = ({
+  startDate,
+  venue,
+}) => (
+  <Stack direction="row" spacing={4}>
+    <Stack direction="row" align="center" spacing={1}>
+      <Icon as={FiClock} />
+      <Text as="span" fontSize="sm">
+        {dayjs(startDate).format('H:mm')}
+      </Text>
+    </Stack>
+    <Stack direction="row" align="center" spacing={1}>
+      <Icon as={FiMapPin} />
+      <Text as="span" fontSize="sm">
+        <NextLink
+          href={`/venues/${createSlugFromString(venue.name, venue.id)}`}
+          passHref
+        >
+          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+          <Link>{venue.name}</Link>
+        </NextLink>
+      </Text>
+    </Stack>
+  </Stack>
+);
+
+const EventItem: React.FC<UpcomingEvent> = (event) => (
+  <Box>
+    <EventItemHeader {...event} />
+    <EventItemMeta {...event} />
+    <Divider mt={4} mb={2} />
+  </Box>
+);
+
 const EventsPage: NextPage = () => {
   const [categoryFilterId, setCategoryFilterId] = useState<string | null>(null);
   const { data, previousData, loading } = useUpcomingEventsQuery({
@@ -132,21 +192,7 @@ const EventsPage: NextPage = () => {
             <Text mb={4}>{dayjs(date).format('dddd, D. MMMM')}</Text>
             <Stack>
               {eventsForDay.map((event) => (
-                <Box key={event.id}>
-                  <Box
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    mb={2}
-                  >
-                    <Heading as="h3" size="md">
-                      {event.title}
-                    </Heading>
-                    <Badge>{event.category.name}</Badge>
-                  </Box>
-                  <Text>{event.description}</Text>
-                  <Divider my={2} />
-                </Box>
+                <EventItem {...event} key={event.id} />
               ))}
             </Stack>
           </Box>

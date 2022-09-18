@@ -4,6 +4,7 @@ import React from 'react';
 import { ApolloProvider } from '@apollo/client';
 import { ChakraProvider } from '@chakra-ui/react';
 import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 import type { AppProps } from 'next/app';
 
 import App from '../components/App';
@@ -11,6 +12,7 @@ import { useApollo } from '../lib/apolloClient';
 import theme from '../lib/theme';
 
 dayjs.locale('de');
+dayjs.extend(customParseFormat);
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   const apolloClient = useApollo(pageProps);
