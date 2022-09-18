@@ -1,15 +1,27 @@
 import React from 'react';
-import { Badge, Box, Divider, Heading, Stack, Text } from '@chakra-ui/react';
+import {
+  Badge,
+  Box,
+  Divider,
+  Heading,
+  Select,
+  Stack,
+  Text,
+} from '@chakra-ui/react';
+import dayjs from 'dayjs';
 import { GetStaticProps, NextPage } from 'next';
 import Head from 'next/head';
-import dayjs from 'dayjs';
 
 import {
+  EventCategoriesDocument,
+  EventCategoriesQuery,
   UpcomingEventsDocument,
   UpcomingEventsQuery,
   UpcomingEventsQueryVariables,
+  useEventCategoriesQuery,
+  useUpcomingEventsQuery,
 } from '../../generated/graphql';
-import { createApolloClient } from '../../lib/apolloClient';
+import { addApolloState, createApolloClient } from '../../lib/apolloClient';
 import { sortEventsByDay } from '../../lib/sort';
 
 interface Event {
@@ -43,7 +55,60 @@ interface UpcomingEvent
   venue: Pick<Venue, 'id' | 'name'>;
 }
 
-const EventsPage: NextPage<{ events: UpcomingEvent[] }> = ({ events }) => {
+const mapUpcomingEventsQueryResults = (data?: UpcomingEventsQuery) =>
+  (data?.events?.data || []).map<UpcomingEvent>((event) => ({
+    id: event.id as string,
+    title: event.attributes?.title as string,
+    description: event.attributes?.description as string,
+    startDate: event.attributes?.startDate,
+    endDate: event.attributes?.endDate,
+    doorsTime: event.attributes?.doorsTime,
+    venue: {
+      id: event.attributes?.venue?.data?.id as string,
+      name: event.attributes?.venue?.data?.attributes?.name as string,
+    },
+    category: {
+      id: event.attributes?.category?.data?.id as string,
+      name: event.attributes?.category?.data?.attributes?.name as string,
+      slug: event.attributes?.category?.data?.attributes?.slug as string,
+    },
+  }));
+
+const EventCategoryDropdown = () => {
+  const { data } = useEventCategoriesQuery();
+
+  const categories =
+    data?.eventCategories?.data.map((category) => ({
+      id: category.id || '',
+      ...category.attributes,
+    })) || [];
+
+  return (
+    <Select
+      placeholder="Alle Kategorien"
+      onChange={(e) => {
+        console.log(e.currentTarget.value);
+      }}
+    >
+      {categories.map((category) => (
+        <option value={category.id} key={category.id}>
+          {category.name}
+        </option>
+      ))}
+    </Select>
+  );
+};
+
+const EventsPage: NextPage = () => {
+  const { data } = useUpcomingEventsQuery({
+    variables: {
+      from: 0,
+      limit: 10,
+      startDate: dayjs().startOf('day').toISOString(),
+    },
+  });
+
+  const events = mapUpcomingEventsQueryResults(data);
   const eventsByDay = sortEventsByDay(events);
 
   return (
@@ -54,12 +119,17 @@ const EventsPage: NextPage<{ events: UpcomingEvent[] }> = ({ events }) => {
       <Heading as="h2" size="lg">
         Kommende Veranstaltungen
       </Heading>
+      <Box>
+        <Stack>
+          <EventCategoryDropdown />
+        </Stack>
+      </Box>
       <Box mt={6}>
-        {eventsByDay.map(({ date, events }) => (
+        {eventsByDay.map(({ date, events: eventsForDay }) => (
           <Box key={date} mb={8}>
             <Text mb={4}>{dayjs(date).format('dddd, D. MMMM')}</Text>
             <Stack>
-              {events.map((event) => (
+              {eventsForDay.map((event) => (
                 <Box key={event.id}>
                   <Box
                     display="flex"
@@ -84,16 +154,19 @@ const EventsPage: NextPage<{ events: UpcomingEvent[] }> = ({ events }) => {
   );
 };
 
-export const getStaticProps: GetStaticProps<{
-  events: UpcomingEvent[];
-}> = async () => {
+export const getStaticProps: GetStaticProps = async () => {
   try {
     const apolloClient = createApolloClient();
 
-    const fetchUpcomingEvents = async () => {
+    const fetchEventCategories = () =>
+      apolloClient.query<EventCategoriesQuery>({
+        query: EventCategoriesDocument,
+      });
+
+    const fetchUpcomingEvents = () => {
       const startDate = dayjs().startOf('day').toISOString();
 
-      const { data } = await apolloClient.query<
+      return apolloClient.query<
         UpcomingEventsQuery,
         UpcomingEventsQueryVariables
       >({
@@ -104,36 +177,16 @@ export const getStaticProps: GetStaticProps<{
           startDate,
         },
       });
-
-      if (!data.events?.data.length) {
-        throw new Error('Error fetching events');
-      }
-
-      const events = data.events.data.map<UpcomingEvent>((event) => ({
-        id: event.id as string,
-        title: event.attributes?.title as string,
-        description: event.attributes?.description as string,
-        startDate: event.attributes?.startDate,
-        endDate: event.attributes?.endDate,
-        doorsTime: event.attributes?.doorsTime,
-        venue: {
-          id: event.attributes?.venue?.data?.id as string,
-          name: event.attributes?.venue?.data?.attributes?.name as string,
-        },
-        category: {
-          id: event.attributes?.category?.data?.id as string,
-          name: event.attributes?.category?.data?.attributes?.name as string,
-          slug: event.attributes?.category?.data?.attributes?.slug as string,
-        },
-      }));
-
-      return events;
     };
 
-    const events = await fetchUpcomingEvents();
+    await Promise.all([fetchUpcomingEvents(), fetchEventCategories()]);
 
     return {
-      props: { events },
+      ...addApolloState(apolloClient, {
+        props: {},
+      }),
+      // Revalidate every 10 minutes
+      revalidate: 10 * 60,
     };
   } catch (err) {
     // eslint-disable-next-line no-console

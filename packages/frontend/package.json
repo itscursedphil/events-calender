@@ -5,8 +5,8 @@
   "scripts": {
     "clean": "rm -rf .next",
     "develop": "NODE_CONFIG_DIR=env next dev",
-    "build": "next build",
-    "start": "next start",
+    "build": "NODE_CONFIG_DIR=env next build",
+    "start": "NODE_CONFIG_DIR=env next start",
     "lint": "next lint",
     "generate": "graphql-codegen --config codegen.yml",
     "upgrade-dependencies": "npm-check -u"
