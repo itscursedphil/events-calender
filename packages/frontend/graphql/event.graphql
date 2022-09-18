@@ -1,0 +1,38 @@
+query Event($id: ID!) {
+  event(id: $id) {
+    data {
+      id
+      attributes {
+        title
+        description
+        startDate
+        endDate
+        doorsTime
+        venue {
+          data {
+            id
+            attributes {
+              name
+              description
+              address {
+                id
+                street
+                streetNumber
+                postcode
+              }
+            }
+          }
+        }
+        category {
+          data {
+            id
+            attributes {
+              name
+              slug
+            }
+          }
+        }
+      }
+    }
+  }
+}

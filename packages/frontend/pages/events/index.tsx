@@ -7,6 +7,8 @@ import {
   Heading,
   Icon,
   Link,
+  LinkBox,
+  LinkOverlay,
   Select,
   Stack,
   Text,
@@ -26,29 +28,10 @@ import {
   useUpcomingEventsQuery,
 } from '../../generated/graphql';
 import { addApolloState, createApolloClient } from '../../lib/apolloClient';
+import { Event, EventCategory, mapEventQueryResult } from '../../lib/event';
+import { createSlugFromString } from '../../lib/slug';
 import { sortEventsByDay } from '../../lib/sort';
-
-interface Event {
-  id: string;
-  title: string;
-  description: string;
-  startDate: string;
-  endDate?: string;
-  doorsTime?: string;
-}
-
-interface Venue {
-  id: string;
-  name: string;
-  description?: string;
-  website?: string;
-}
-
-interface EventCategory {
-  id: string;
-  name: string;
-  slug: string;
-}
+import { Venue } from '../../lib/venue';
 
 interface UpcomingEvent
   extends Pick<
@@ -60,23 +43,9 @@ interface UpcomingEvent
 }
 
 const mapUpcomingEventsQueryResults = (data?: UpcomingEventsQuery) =>
-  (data?.events?.data || []).map<UpcomingEvent>((event) => ({
-    id: event.id as string,
-    title: event.attributes?.title as string,
-    description: event.attributes?.description as string,
-    startDate: event.attributes?.startDate,
-    endDate: event.attributes?.endDate,
-    doorsTime: event.attributes?.doorsTime,
-    venue: {
-      id: event.attributes?.venue?.data?.id as string,
-      name: event.attributes?.venue?.data?.attributes?.name as string,
-    },
-    category: {
-      id: event.attributes?.category?.data?.id as string,
-      name: event.attributes?.category?.data?.attributes?.name as string,
-      slug: event.attributes?.category?.data?.attributes?.slug as string,
-    },
-  }));
+  (data?.events?.data || []).map((event) =>
+    mapEventQueryResult<typeof event, UpcomingEvent>(event)
+  );
 
 const EventCategoryDropdown: React.FC<{
   onChange?: (categoryId: string) => void;
@@ -103,23 +72,14 @@ const EventCategoryDropdown: React.FC<{
   );
 };
 
-const createSlugFromString = (str: string, id: string) => {
-  const parsedStr = str
-    .split(' ')
-    .map((part) => part.replace(/[^A-Za-z0-9]/g, ''))
-    .join('-')
-    .toLowerCase();
-
-  return `${parsedStr}-${id}`;
-};
-
-const EventItemHeader: React.FC<Pick<UpcomingEvent, 'title' | 'category'>> = ({
-  title,
-  category,
-}) => (
+const EventItemHeader: React.FC<
+  Pick<UpcomingEvent, 'title' | 'category' | 'id'>
+> = ({ id, title, category }) => (
   <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
     <Heading as="h3" size="md">
-      {title}
+      <NextLink href={`/events/${createSlugFromString(title, id)}`} passHref>
+        <LinkOverlay>{title}</LinkOverlay>
+      </NextLink>
     </Heading>
     <Badge>{category.name}</Badge>
   </Box>
@@ -152,11 +112,10 @@ const EventItemMeta: React.FC<Pick<UpcomingEvent, 'startDate' | 'venue'>> = ({
 );
 
 const EventItem: React.FC<UpcomingEvent> = (event) => (
-  <Box>
+  <LinkBox>
     <EventItemHeader {...event} />
     <EventItemMeta {...event} />
-    <Divider mt={4} mb={2} />
-  </Box>
+  </LinkBox>
 );
 
 const EventsPage: NextPage = () => {
@@ -186,11 +145,12 @@ const EventsPage: NextPage = () => {
           <EventCategoryDropdown onChange={setCategoryFilterId} />
         </Stack>
       </Box>
-      <Box mt={6}>
+      <Stack spacing={12} mt={6}>
         {eventsByDay.map(({ date, events: eventsForDay }) => (
-          <Box key={date} mb={8}>
-            <Text mb={4}>{dayjs(date).format('dddd, D. MMMM')}</Text>
-            <Stack>
+          <Box key={date}>
+            <Text>{dayjs(date).format('dddd, D. MMMM')}</Text>
+            <Divider my={4} />
+            <Stack divider={<Divider />} spacing={4}>
               {eventsForDay.map((event) => (
                 <EventItem {...event} key={event.id} />
               ))}
@@ -198,7 +158,7 @@ const EventsPage: NextPage = () => {
           </Box>
         ))}
         {!loading && !events.length && <Text>Leider keine Ergebnisse</Text>}
-      </Box>
+      </Stack>
     </>
   );
 };

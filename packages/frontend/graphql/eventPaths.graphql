@@ -1,0 +1,14 @@
+query EventPaths($from: Int = 0, $limit: Int = 10, $startDate: DateTime!) {
+  events(
+    filters: { startDate: { gte: $startDate } }
+    pagination: { start: $from, limit: $limit }
+    sort: "startDate:asc"
+  ) {
+    data {
+      id
+      attributes {
+        title
+      }
+    }
+  }
+}
