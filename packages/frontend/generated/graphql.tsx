@@ -1283,6 +1283,7 @@ export type UpcomingEventsQueryVariables = Exact<{
   from?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
   startDate: Scalars['DateTime'];
+  categories?: InputMaybe<Array<InputMaybe<Scalars['ID']>> | InputMaybe<Scalars['ID']>>;
 }>;
 
 
@@ -1445,9 +1446,9 @@ export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
 export const UpcomingEventsDocument = gql`
-    query UpcomingEvents($from: Int = 0, $limit: Int = 10, $startDate: DateTime!) {
+    query UpcomingEvents($from: Int = 0, $limit: Int = 10, $startDate: DateTime!, $categories: [ID]) {
   events(
-    filters: {startDate: {gte: $startDate}}
+    filters: {startDate: {gte: $startDate}, category: {id: {in: $categories}}}
     pagination: {start: $from, limit: $limit}
     sort: "startDate:asc"
   ) {
@@ -1497,6 +1498,7 @@ export const UpcomingEventsDocument = gql`
  *      from: // value for 'from'
  *      limit: // value for 'limit'
  *      startDate: // value for 'startDate'
+ *      categories: // value for 'categories'
  *   },
  * });
  */

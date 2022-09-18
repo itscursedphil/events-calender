@@ -1,9 +1,10 @@
+import 'dayjs/locale/de';
+
 import React from 'react';
 import { ApolloProvider } from '@apollo/client';
 import { ChakraProvider } from '@chakra-ui/react';
-import type { AppProps } from 'next/app';
 import dayjs from 'dayjs';
-import 'dayjs/locale/de';
+import type { AppProps } from 'next/app';
 
 import App from '../components/App';
 import { useApollo } from '../lib/apolloClient';

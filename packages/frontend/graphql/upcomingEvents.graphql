@@ -1,6 +1,14 @@
-query UpcomingEvents($from: Int = 0, $limit: Int = 10, $startDate: DateTime!) {
+query UpcomingEvents(
+  $from: Int = 0
+  $limit: Int = 10
+  $startDate: DateTime!
+  $categories: [ID]
+) {
   events(
-    filters: { startDate: { gte: $startDate } }
+    filters: {
+      startDate: { gte: $startDate }
+      category: { id: { in: $categories } }
+    }
     pagination: { start: $from, limit: $limit }
     sort: "startDate:asc"
   ) {

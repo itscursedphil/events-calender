@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Badge,
   Box,
@@ -74,7 +74,9 @@ const mapUpcomingEventsQueryResults = (data?: UpcomingEventsQuery) =>
     },
   }));
 
-const EventCategoryDropdown = () => {
+const EventCategoryDropdown: React.FC<{
+  onChange?: (categoryId: string) => void;
+}> = ({ onChange }) => {
   const { data } = useEventCategoriesQuery();
 
   const categories =
@@ -86,9 +88,7 @@ const EventCategoryDropdown = () => {
   return (
     <Select
       placeholder="Alle Kategorien"
-      onChange={(e) => {
-        console.log(e.currentTarget.value);
-      }}
+      onChange={(e) => onChange && onChange(e.currentTarget.value)}
     >
       {categories.map((category) => (
         <option value={category.id} key={category.id}>
@@ -100,15 +100,17 @@ const EventCategoryDropdown = () => {
 };
 
 const EventsPage: NextPage = () => {
-  const { data } = useUpcomingEventsQuery({
+  const [categoryFilterId, setCategoryFilterId] = useState<string | null>(null);
+  const { data, previousData, loading } = useUpcomingEventsQuery({
     variables: {
       from: 0,
       limit: 10,
       startDate: dayjs().startOf('day').toISOString(),
+      categories: categoryFilterId ? [categoryFilterId] : undefined,
     },
   });
 
-  const events = mapUpcomingEventsQueryResults(data);
+  const events = mapUpcomingEventsQueryResults(data || previousData);
   const eventsByDay = sortEventsByDay(events);
 
   return (
@@ -119,9 +121,9 @@ const EventsPage: NextPage = () => {
       <Heading as="h2" size="lg">
         Kommende Veranstaltungen
       </Heading>
-      <Box>
+      <Box mt={4}>
         <Stack>
-          <EventCategoryDropdown />
+          <EventCategoryDropdown onChange={setCategoryFilterId} />
         </Stack>
       </Box>
       <Box mt={6}>
@@ -149,6 +151,7 @@ const EventsPage: NextPage = () => {
             </Stack>
           </Box>
         ))}
+        {!loading && !events.length && <Text>Leider keine Ergebnisse</Text>}
       </Box>
     </>
   );
