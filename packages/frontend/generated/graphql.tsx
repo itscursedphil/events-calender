@@ -1257,10 +1257,10 @@ export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type CurrentUserQuery = { __typename?: 'Query', me?: { __typename?: 'UsersPermissionsMe', id: string, email?: string | null, username: string } | null };
 
-export type EventsQueryVariables = Exact<{ [key: string]: never; }>;
+export type EventCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type EventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventEntityResponseCollection', data: Array<{ __typename?: 'EventEntity', id?: string | null, attributes?: { __typename?: 'Event', title: string } | null }> } | null };
+export type EventCategoriesQuery = { __typename?: 'Query', eventCategories?: { __typename?: 'EventCategoryEntityResponseCollection', data: Array<{ __typename?: 'EventCategoryEntity', id?: string | null, attributes?: { __typename?: 'EventCategory', name: string, slug: string } | null }> } | null };
 
 export type LoginMutationVariables = Exact<{
   email: Scalars['String'];
@@ -1278,6 +1278,15 @@ export type RegisterMutationVariables = Exact<{
 
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UsersPermissionsLoginPayload', jwt?: string | null, user: { __typename?: 'UsersPermissionsMe', id: string, username: string, email?: string | null } } };
+
+export type UpcomingEventsQueryVariables = Exact<{
+  from?: InputMaybe<Scalars['Int']>;
+  limit?: InputMaybe<Scalars['Int']>;
+  startDate: Scalars['DateTime'];
+}>;
+
+
+export type UpcomingEventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventEntityResponseCollection', data: Array<{ __typename?: 'EventEntity', id?: string | null, attributes?: { __typename?: 'Event', title: string, description: string, startDate: any, endDate?: any | null, doorsTime?: any | null, venue?: { __typename?: 'VenueEntityResponse', data?: { __typename?: 'VenueEntity', id?: string | null, attributes?: { __typename?: 'Venue', name: string } | null } | null } | null, category?: { __typename?: 'EventCategoryEntityResponse', data?: { __typename?: 'EventCategoryEntity', id?: string | null, attributes?: { __typename?: 'EventCategory', name: string, slug: string } | null } | null } | null } | null }> } | null };
 
 
 export const CurrentUserDocument = gql`
@@ -1316,13 +1325,14 @@ export function useCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type CurrentUserQueryHookResult = ReturnType<typeof useCurrentUserQuery>;
 export type CurrentUserLazyQueryHookResult = ReturnType<typeof useCurrentUserLazyQuery>;
 export type CurrentUserQueryResult = Apollo.QueryResult<CurrentUserQuery, CurrentUserQueryVariables>;
-export const EventsDocument = gql`
-    query Events {
-  events {
+export const EventCategoriesDocument = gql`
+    query EventCategories {
+  eventCategories {
     data {
       id
       attributes {
-        title
+        name
+        slug
       }
     }
   }
@@ -1330,31 +1340,31 @@ export const EventsDocument = gql`
     `;
 
 /**
- * __useEventsQuery__
+ * __useEventCategoriesQuery__
  *
- * To run a query within a React component, call `useEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useEventCategoriesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEventCategoriesQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useEventsQuery({
+ * const { data, loading, error } = useEventCategoriesQuery({
  *   variables: {
  *   },
  * });
  */
-export function useEventsQuery(baseOptions?: Apollo.QueryHookOptions<EventsQuery, EventsQueryVariables>) {
+export function useEventCategoriesQuery(baseOptions?: Apollo.QueryHookOptions<EventCategoriesQuery, EventCategoriesQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<EventsQuery, EventsQueryVariables>(EventsDocument, options);
+        return Apollo.useQuery<EventCategoriesQuery, EventCategoriesQueryVariables>(EventCategoriesDocument, options);
       }
-export function useEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EventsQuery, EventsQueryVariables>) {
+export function useEventCategoriesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EventCategoriesQuery, EventCategoriesQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<EventsQuery, EventsQueryVariables>(EventsDocument, options);
+          return Apollo.useLazyQuery<EventCategoriesQuery, EventCategoriesQueryVariables>(EventCategoriesDocument, options);
         }
-export type EventsQueryHookResult = ReturnType<typeof useEventsQuery>;
-export type EventsLazyQueryHookResult = ReturnType<typeof useEventsLazyQuery>;
-export type EventsQueryResult = Apollo.QueryResult<EventsQuery, EventsQueryVariables>;
+export type EventCategoriesQueryHookResult = ReturnType<typeof useEventCategoriesQuery>;
+export type EventCategoriesLazyQueryHookResult = ReturnType<typeof useEventCategoriesLazyQuery>;
+export type EventCategoriesQueryResult = Apollo.QueryResult<EventCategoriesQuery, EventCategoriesQueryVariables>;
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(input: {identifier: $email, password: $password}) {
@@ -1434,3 +1444,70 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const UpcomingEventsDocument = gql`
+    query UpcomingEvents($from: Int = 0, $limit: Int = 10, $startDate: DateTime!) {
+  events(
+    filters: {startDate: {gte: $startDate}}
+    pagination: {start: $from, limit: $limit}
+    sort: "startDate:asc"
+  ) {
+    data {
+      id
+      attributes {
+        title
+        description
+        startDate
+        endDate
+        doorsTime
+        venue {
+          data {
+            id
+            attributes {
+              name
+            }
+          }
+        }
+        category {
+          data {
+            id
+            attributes {
+              name
+              slug
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useUpcomingEventsQuery__
+ *
+ * To run a query within a React component, call `useUpcomingEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUpcomingEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUpcomingEventsQuery({
+ *   variables: {
+ *      from: // value for 'from'
+ *      limit: // value for 'limit'
+ *      startDate: // value for 'startDate'
+ *   },
+ * });
+ */
+export function useUpcomingEventsQuery(baseOptions: Apollo.QueryHookOptions<UpcomingEventsQuery, UpcomingEventsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<UpcomingEventsQuery, UpcomingEventsQueryVariables>(UpcomingEventsDocument, options);
+      }
+export function useUpcomingEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UpcomingEventsQuery, UpcomingEventsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<UpcomingEventsQuery, UpcomingEventsQueryVariables>(UpcomingEventsDocument, options);
+        }
+export type UpcomingEventsQueryHookResult = ReturnType<typeof useUpcomingEventsQuery>;
+export type UpcomingEventsLazyQueryHookResult = ReturnType<typeof useUpcomingEventsLazyQuery>;
+export type UpcomingEventsQueryResult = Apollo.QueryResult<UpcomingEventsQuery, UpcomingEventsQueryVariables>;

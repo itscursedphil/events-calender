@@ -1,0 +1,11 @@
+query EventCategories {
+  eventCategories {
+    data {
+      id
+      attributes {
+        name
+        slug
+      }
+    }
+  }
+}

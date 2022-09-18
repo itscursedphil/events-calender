@@ -5,5 +5,8 @@
     "@t3n/eslint-config-react",
     "@t3n/eslint-config-typescript"
   ],
+  "rules": {
+    "react/prop-types": false
+  },
   "ignorePatterns": ["/generated"]
 }
