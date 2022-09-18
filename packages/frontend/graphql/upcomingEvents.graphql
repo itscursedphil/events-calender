@@ -3,11 +3,13 @@ query UpcomingEvents(
   $limit: Int = 10
   $startDate: DateTime!
   $categories: [ID]
+  $venues: [ID]
 ) {
   events(
     filters: {
       startDate: { gte: $startDate }
       category: { id: { in: $categories } }
+      venue: { id: { in: $venues } }
     }
     pagination: { start: $from, limit: $limit }
     sort: "startDate:asc"
@@ -37,6 +39,14 @@ query UpcomingEvents(
             }
           }
         }
+      }
+    }
+    meta {
+      pagination {
+        total
+        page
+        pageSize
+        pageCount
       }
     }
   }

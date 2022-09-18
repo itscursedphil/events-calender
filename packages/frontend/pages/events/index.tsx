@@ -147,6 +147,9 @@ const EventsPage: NextPage = () => {
 };
 
 export const getStaticProps: GetStaticProps = async () => {
+  // Revalidate every 10 minutes
+  const revalidate = 10 * 60;
+
   try {
     const apolloClient = createApolloClient();
 
@@ -177,14 +180,14 @@ export const getStaticProps: GetStaticProps = async () => {
       ...addApolloState(apolloClient, {
         props: {},
       }),
-      // Revalidate every 10 minutes
-      revalidate: 10 * 60,
+      revalidate,
     };
   } catch (err) {
     // eslint-disable-next-line no-console
     console.log(err);
     return {
       props: { events: [] },
+      revalidate,
     };
   }
 };

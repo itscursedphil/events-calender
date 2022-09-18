@@ -10,5 +10,13 @@ query EventPaths($from: Int = 0, $limit: Int = 10, $startDate: DateTime!) {
         title
       }
     }
+    meta {
+      pagination {
+        total
+        page
+        pageSize
+        pageCount
+      }
+    }
   }
 }

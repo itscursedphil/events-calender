@@ -1,0 +1,29 @@
+query Venues($from: Int = 0, $limit: Int = 20, $ids: [ID]) {
+  venues(
+    filters: { id: { or: $ids } }
+    pagination: { start: $from, limit: $limit }
+  ) {
+    data {
+      id
+      attributes {
+        name
+        description
+        website
+        address {
+          id
+          street
+          streetNumber
+          postcode
+        }
+      }
+    }
+    meta {
+      pagination {
+        total
+        page
+        pageSize
+        pageCount
+      }
+    }
+  }
+}
