@@ -42,6 +42,11 @@ const persistUserToLocalStorage = (user: CurrentUser) => {
   window.localStorage.setItem(storageKey, window.btoa(JSON.stringify(user)));
 };
 
+const removeUserAuthStorage = () => {
+  window.localStorage.removeItem(storageKey);
+  fetch('/api/logout');
+};
+
 const useCurrentUserStore = create(
   devtools<CurrentUserStore>(
     (set) => {
@@ -56,7 +61,7 @@ const useCurrentUserStore = create(
           if (user) {
             persistUserToLocalStorage(user);
           } else {
-            window.localStorage.removeItem(storageKey);
+            removeUserAuthStorage();
           }
 
           set({ user, initialized: true });
@@ -93,12 +98,12 @@ const useCurrentUserStore = create(
               initialized: true,
             });
           } catch (err) {
-            window.localStorage.removeItem(storageKey);
+            removeUserAuthStorage();
             set({ user: null, loading: false, initialized: true });
           }
         },
         resetUser: () => {
-          window.localStorage.removeItem(storageKey);
+          removeUserAuthStorage();
 
           set({
             user: null,

@@ -1,16 +1,21 @@
 import React from 'react';
-import { Heading } from '@chakra-ui/react';
+import { Box, Heading } from '@chakra-ui/react';
 import { NextPage } from 'next';
 import Head from 'next/head';
+
+import { RegisterForm } from '../../components/Register';
 
 const RegisterPage: NextPage = () => (
   <>
     <Head>
-      <title>Register</title>
+      <title>Registrieren</title>
     </Head>
     <Heading as="h2" size="lg">
-      Register
+      Registrieren
     </Heading>
+    <Box mt={6}>
+      <RegisterForm />
+    </Box>
   </>
 );
 

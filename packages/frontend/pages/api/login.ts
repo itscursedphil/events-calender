@@ -1,4 +1,3 @@
-import { serialize } from 'cookie';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import {
@@ -6,8 +5,8 @@ import {
   LoginMutation,
   LoginMutationVariables,
 } from '../../generated/graphql';
+import { createAuthCookie } from '../../lib/api';
 import { createApolloClient } from '../../lib/apolloClient';
-import config from '../../lib/config';
 
 export interface LoginErrorResponseData {
   state: 'error';
@@ -36,17 +35,7 @@ const loginMutation = (identifier: string, password: string) =>
     fetchPolicy: 'network-only',
   });
 
-// TODO: Improve and set lifetime based on JWT
-// TODO: Add better error handling
-// TODO: Set cookie more secure in production environment
-// TODO: Implement session cookie
-const createCookie = (jwt: string) =>
-  serialize(config.authentication.cookie, jwt, {
-    expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-    httpOnly: true,
-    path: '/',
-  });
-
+// TODO: Validate values based on validationSchema
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const { identifier, password } = req.body;
@@ -67,7 +56,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
     }
 
-    const cookie = createCookie(data.login.jwt);
+    const cookie = createAuthCookie(data.login.jwt);
 
     res.setHeader('Set-Cookie', cookie);
     return res.status(200).json({
