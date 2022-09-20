@@ -13,6 +13,8 @@ export interface Event {
   startDate: string;
   endDate?: string;
   doorsTime?: string;
+  attendeesCount: number;
+  attending?: boolean;
   category: EventCategory;
   venue: Venue;
 }

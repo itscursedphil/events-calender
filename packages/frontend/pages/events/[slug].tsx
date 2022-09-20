@@ -1,10 +1,23 @@
-import React from 'react';
-import { Badge, Box, Heading, Stack, Text } from '@chakra-ui/react';
+import React, { useEffect } from 'react';
+import { FiPlus, FiX } from 'react-icons/fi';
+import {
+  Badge,
+  Box,
+  Button,
+  Heading,
+  Icon,
+  Skeleton,
+  Stack,
+  Text,
+} from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import Head from 'next/head';
 
-import { EventStartDateWithIcon } from '../../components/Event';
+import {
+  EventAttendeesCountWithIcon,
+  EventStartDateWithIcon,
+} from '../../components/Event';
 import { VenueLinkWithIcon } from '../../components/Venue';
 import {
   EventDocument,
@@ -13,17 +26,86 @@ import {
   EventPathsQueryVariables,
   EventQuery,
   EventQueryVariables,
+  useEventAttendingStatusLazyQuery,
+  useEventLazyQuery,
+  useUpdateEventAttendingMutation,
 } from '../../generated/graphql';
+import useCurrentUserStore from '../../hooks/useCurrentUser';
 import { addApolloState, createApolloClient } from '../../lib/apolloClient';
 import { Event, mapEventQueryResult } from '../../lib/event';
 import { createSlugFromString, getIdFromSlug } from '../../lib/slug';
 
+// TODO: Finish
+const AttendEventSelect: React.FC<{ id: Event['id'] }> = ({ id }) => {
+  const { user, loading, initialized } = useCurrentUserStore((state) => ({
+    user: state.user,
+    loading: state.loading,
+    initialized: state.initialized,
+  }));
+  // TODO: Fix cache issue
+  const [
+    eventStatusQuery,
+    {
+      data,
+      loading: attendingStatusLoading,
+      previousData,
+      refetch: refetchEventAttendingStatus,
+    },
+  ] = useEventAttendingStatusLazyQuery({ variables: { id } });
+  const [updateEventAttendingMutation] = useUpdateEventAttendingMutation();
+  const [eventQuery] = useEventLazyQuery({ variables: { id } });
+
+  useEffect(() => {
+    eventStatusQuery();
+  }, [eventStatusQuery]);
+
+  const isAttending = (data || previousData)?.event?.data?.attributes
+    ?.attending;
+
+  const handleButtonClick = async () => {
+    await updateEventAttendingMutation({
+      variables: { eventId: id, attending: !isAttending },
+    });
+    refetchEventAttendingStatus();
+    eventQuery();
+  };
+
+  return (
+    <Skeleton
+      isLoaded={
+        initialized && !loading && (!attendingStatusLoading || !!previousData)
+      }
+    >
+      {isAttending ? (
+        <Button
+          rightIcon={<Icon as={FiX} />}
+          variant="outline"
+          size="sm"
+          onClick={handleButtonClick}
+        >
+          Absagen
+        </Button>
+      ) : (
+        <Button
+          rightIcon={<Icon as={FiPlus} />}
+          size="sm"
+          onClick={handleButtonClick}
+        >
+          Teilnehmen
+        </Button>
+      )}
+    </Skeleton>
+  );
+};
+
 const EventPage: NextPage<Event> = ({
+  id,
   title,
   description,
   startDate,
   venue,
   category,
+  attendeesCount,
 }) => (
   <>
     <Head>
@@ -39,7 +121,11 @@ const EventPage: NextPage<Event> = ({
       <Stack spacing={2}>
         <EventStartDateWithIcon startDate={startDate} />
         <VenueLinkWithIcon {...venue} />
+        <EventAttendeesCountWithIcon count={attendeesCount} compact={false} />
       </Stack>
+    </Box>
+    <Box my={4} display="flex">
+      <AttendEventSelect id={id} />
     </Box>
     <Text>{description}</Text>
   </>

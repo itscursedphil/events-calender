@@ -1,0 +1,3 @@
+mutation UpdateEventAttending($eventId: ID!, $attending: Boolean!) {
+  updateEventAttending(id: $eventId, attending: $attending)
+}

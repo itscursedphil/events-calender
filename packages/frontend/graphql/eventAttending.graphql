@@ -1,0 +1,10 @@
+query EventAttendingStatus($id: ID!) {
+  event(id: $id) {
+    data {
+      id
+      attributes {
+        attending
+      }
+    }
+  }
+}

@@ -17,12 +17,19 @@ import { createSlugFromString } from '../../lib/slug';
 import { sortEventsByDay } from '../../lib/sort';
 import { Venue } from '../../lib/venue';
 import { VenueLinkWithIcon } from '../Venue';
+import EventAttendeesCountWithIcon from './EventAttendeesCountWithIcon';
 import EventStartDateWithIcon from './EventStartDateWithIcon';
 
 export interface UpcomingEvent
   extends Pick<
     Event,
-    'id' | 'title' | 'description' | 'startDate' | 'endDate' | 'doorsTime'
+    | 'id'
+    | 'title'
+    | 'description'
+    | 'startDate'
+    | 'endDate'
+    | 'doorsTime'
+    | 'attendeesCount'
   > {
   category: Pick<EventCategory, 'id' | 'name' | 'slug'>;
   venue: Pick<Venue, 'id' | 'name'>;
@@ -41,14 +48,16 @@ const EventItemHeader: React.FC<
   </Box>
 );
 
-const EventItemMeta: React.FC<Pick<UpcomingEvent, 'startDate' | 'venue'>> = ({
-  startDate,
-  venue,
-}) => (
-  <Stack direction="row" spacing={4}>
-    <EventStartDateWithIcon startDate={startDate} />
-    <VenueLinkWithIcon {...venue} />
-  </Stack>
+const EventItemMeta: React.FC<
+  Pick<UpcomingEvent, 'startDate' | 'venue' | 'attendeesCount'>
+> = ({ startDate, venue, attendeesCount }) => (
+  <Box display="flex" justifyContent="space-between">
+    <Stack direction="row" spacing={4}>
+      <EventStartDateWithIcon startDate={startDate} />
+      <VenueLinkWithIcon {...venue} />
+    </Stack>
+    <EventAttendeesCountWithIcon count={attendeesCount} />
+  </Box>
 );
 
 const EventItem: React.FC<UpcomingEvent> = (event) => (

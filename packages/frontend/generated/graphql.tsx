@@ -93,34 +93,24 @@ export type DateTimeFilterInput = {
 
 export type Event = {
   __typename?: 'Event';
-  attendees?: Maybe<UsersPermissionsUserRelationResponseCollection>;
+  attendeesCount?: Maybe<Scalars['Int']>;
+  attending?: Maybe<Scalars['Boolean']>;
   category?: Maybe<EventCategoryEntityResponse>;
   createdAt?: Maybe<Scalars['DateTime']>;
   description: Scalars['String'];
   doorsTime?: Maybe<Scalars['Time']>;
   endDate?: Maybe<Scalars['DateTime']>;
-  publishedAt?: Maybe<Scalars['DateTime']>;
   startDate: Scalars['DateTime'];
   title: Scalars['String'];
   updatedAt?: Maybe<Scalars['DateTime']>;
   venue?: Maybe<VenueEntityResponse>;
 };
 
-
-export type EventAttendeesArgs = {
-  filters?: InputMaybe<UsersPermissionsUserFiltersInput>;
-  pagination?: InputMaybe<PaginationArg>;
-  sort?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-};
-
 export type EventCategory = {
   __typename?: 'EventCategory';
-  createdAt?: Maybe<Scalars['DateTime']>;
   events?: Maybe<EventRelationResponseCollection>;
   name: Scalars['String'];
-  publishedAt?: Maybe<Scalars['DateTime']>;
   slug: Scalars['String'];
-  updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
 
@@ -150,21 +140,17 @@ export type EventCategoryEntityResponseCollection = {
 
 export type EventCategoryFiltersInput = {
   and?: InputMaybe<Array<InputMaybe<EventCategoryFiltersInput>>>;
-  createdAt?: InputMaybe<DateTimeFilterInput>;
   events?: InputMaybe<EventFiltersInput>;
   id?: InputMaybe<IdFilterInput>;
   name?: InputMaybe<StringFilterInput>;
   not?: InputMaybe<EventCategoryFiltersInput>;
   or?: InputMaybe<Array<InputMaybe<EventCategoryFiltersInput>>>;
-  publishedAt?: InputMaybe<DateTimeFilterInput>;
   slug?: InputMaybe<StringFilterInput>;
-  updatedAt?: InputMaybe<DateTimeFilterInput>;
 };
 
 export type EventCategoryInput = {
   events?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
   name?: InputMaybe<Scalars['String']>;
-  publishedAt?: InputMaybe<Scalars['DateTime']>;
   slug?: InputMaybe<Scalars['String']>;
 };
 
@@ -187,7 +173,6 @@ export type EventEntityResponseCollection = {
 
 export type EventFiltersInput = {
   and?: InputMaybe<Array<InputMaybe<EventFiltersInput>>>;
-  attendees?: InputMaybe<UsersPermissionsUserFiltersInput>;
   category?: InputMaybe<EventCategoryFiltersInput>;
   createdAt?: InputMaybe<DateTimeFilterInput>;
   description?: InputMaybe<StringFilterInput>;
@@ -196,7 +181,6 @@ export type EventFiltersInput = {
   id?: InputMaybe<IdFilterInput>;
   not?: InputMaybe<EventFiltersInput>;
   or?: InputMaybe<Array<InputMaybe<EventFiltersInput>>>;
-  publishedAt?: InputMaybe<DateTimeFilterInput>;
   startDate?: InputMaybe<DateTimeFilterInput>;
   title?: InputMaybe<StringFilterInput>;
   updatedAt?: InputMaybe<DateTimeFilterInput>;
@@ -204,12 +188,10 @@ export type EventFiltersInput = {
 };
 
 export type EventInput = {
-  attendees?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
   category?: InputMaybe<Scalars['ID']>;
   description?: InputMaybe<Scalars['String']>;
   doorsTime?: InputMaybe<Scalars['Time']>;
   endDate?: InputMaybe<Scalars['DateTime']>;
-  publishedAt?: InputMaybe<Scalars['DateTime']>;
   startDate?: InputMaybe<Scalars['DateTime']>;
   title?: InputMaybe<Scalars['String']>;
   venue?: InputMaybe<Scalars['ID']>;
@@ -394,6 +376,7 @@ export type Mutation = {
   /** Reset user password. Confirm with a code (resetToken from forgotPassword) */
   resetPassword?: Maybe<UsersPermissionsLoginPayload>;
   updateEvent?: Maybe<EventEntityResponse>;
+  updateEventAttending?: Maybe<Scalars['Boolean']>;
   updateEventCategory?: Maybe<EventCategoryEntityResponse>;
   updateFileInfo: UploadFileEntityResponse;
   updateUploadFile?: Maybe<UploadFileEntityResponse>;
@@ -526,6 +509,12 @@ export type MutationResetPasswordArgs = {
 
 export type MutationUpdateEventArgs = {
   data: EventInput;
+  id: Scalars['ID'];
+};
+
+
+export type MutationUpdateEventAttendingArgs = {
+  attending: Scalars['Boolean'];
   id: Scalars['ID'];
 };
 
@@ -1262,7 +1251,14 @@ export type EventQueryVariables = Exact<{
 }>;
 
 
-export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'EventEntityResponse', data?: { __typename?: 'EventEntity', id?: string | null, attributes?: { __typename?: 'Event', title: string, description: string, startDate: any, endDate?: any | null, doorsTime?: any | null, venue?: { __typename?: 'VenueEntityResponse', data?: { __typename?: 'VenueEntity', id?: string | null, attributes?: { __typename?: 'Venue', name: string, description?: string | null, address: { __typename?: 'ComponentLocationAddress', id: string, street: string, streetNumber: string, postcode: number } } | null } | null } | null, category?: { __typename?: 'EventCategoryEntityResponse', data?: { __typename?: 'EventCategoryEntity', id?: string | null, attributes?: { __typename?: 'EventCategory', name: string, slug: string } | null } | null } | null } | null } | null } | null };
+export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'EventEntityResponse', data?: { __typename?: 'EventEntity', id?: string | null, attributes?: { __typename?: 'Event', title: string, description: string, startDate: any, endDate?: any | null, doorsTime?: any | null, attendeesCount?: number | null, venue?: { __typename?: 'VenueEntityResponse', data?: { __typename?: 'VenueEntity', id?: string | null, attributes?: { __typename?: 'Venue', name: string, description?: string | null, address: { __typename?: 'ComponentLocationAddress', id: string, street: string, streetNumber: string, postcode: number } } | null } | null } | null, category?: { __typename?: 'EventCategoryEntityResponse', data?: { __typename?: 'EventCategoryEntity', id?: string | null, attributes?: { __typename?: 'EventCategory', name: string, slug: string } | null } | null } | null } | null } | null } | null };
+
+export type EventAttendingStatusQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type EventAttendingStatusQuery = { __typename?: 'Query', event?: { __typename?: 'EventEntityResponse', data?: { __typename?: 'EventEntity', id?: string | null, attributes?: { __typename?: 'Event', attending?: boolean | null } | null } | null } | null };
 
 export type EventCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1304,7 +1300,15 @@ export type UpcomingEventsQueryVariables = Exact<{
 }>;
 
 
-export type UpcomingEventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventEntityResponseCollection', data: Array<{ __typename?: 'EventEntity', id?: string | null, attributes?: { __typename?: 'Event', title: string, description: string, startDate: any, endDate?: any | null, doorsTime?: any | null, venue?: { __typename?: 'VenueEntityResponse', data?: { __typename?: 'VenueEntity', id?: string | null, attributes?: { __typename?: 'Venue', name: string } | null } | null } | null, category?: { __typename?: 'EventCategoryEntityResponse', data?: { __typename?: 'EventCategoryEntity', id?: string | null, attributes?: { __typename?: 'EventCategory', name: string, slug: string } | null } | null } | null } | null }>, meta: { __typename?: 'ResponseCollectionMeta', pagination: { __typename?: 'Pagination', total: number, page: number, pageSize: number, pageCount: number } } } | null };
+export type UpcomingEventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventEntityResponseCollection', data: Array<{ __typename?: 'EventEntity', id?: string | null, attributes?: { __typename?: 'Event', title: string, description: string, startDate: any, endDate?: any | null, doorsTime?: any | null, attendeesCount?: number | null, venue?: { __typename?: 'VenueEntityResponse', data?: { __typename?: 'VenueEntity', id?: string | null, attributes?: { __typename?: 'Venue', name: string } | null } | null } | null, category?: { __typename?: 'EventCategoryEntityResponse', data?: { __typename?: 'EventCategoryEntity', id?: string | null, attributes?: { __typename?: 'EventCategory', name: string, slug: string } | null } | null } | null } | null }>, meta: { __typename?: 'ResponseCollectionMeta', pagination: { __typename?: 'Pagination', total: number, page: number, pageSize: number, pageCount: number } } } | null };
+
+export type UpdateEventAttendingMutationVariables = Exact<{
+  eventId: Scalars['ID'];
+  attending: Scalars['Boolean'];
+}>;
+
+
+export type UpdateEventAttendingMutation = { __typename?: 'Mutation', updateEventAttending?: boolean | null };
 
 export type VenueQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -1378,6 +1382,7 @@ export const EventDocument = gql`
         startDate
         endDate
         doorsTime
+        attendeesCount
         venue {
           data {
             id
@@ -1435,6 +1440,46 @@ export function useEventLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Even
 export type EventQueryHookResult = ReturnType<typeof useEventQuery>;
 export type EventLazyQueryHookResult = ReturnType<typeof useEventLazyQuery>;
 export type EventQueryResult = Apollo.QueryResult<EventQuery, EventQueryVariables>;
+export const EventAttendingStatusDocument = gql`
+    query EventAttendingStatus($id: ID!) {
+  event(id: $id) {
+    data {
+      id
+      attributes {
+        attending
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useEventAttendingStatusQuery__
+ *
+ * To run a query within a React component, call `useEventAttendingStatusQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEventAttendingStatusQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEventAttendingStatusQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useEventAttendingStatusQuery(baseOptions: Apollo.QueryHookOptions<EventAttendingStatusQuery, EventAttendingStatusQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<EventAttendingStatusQuery, EventAttendingStatusQueryVariables>(EventAttendingStatusDocument, options);
+      }
+export function useEventAttendingStatusLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EventAttendingStatusQuery, EventAttendingStatusQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<EventAttendingStatusQuery, EventAttendingStatusQueryVariables>(EventAttendingStatusDocument, options);
+        }
+export type EventAttendingStatusQueryHookResult = ReturnType<typeof useEventAttendingStatusQuery>;
+export type EventAttendingStatusLazyQueryHookResult = ReturnType<typeof useEventAttendingStatusLazyQuery>;
+export type EventAttendingStatusQueryResult = Apollo.QueryResult<EventAttendingStatusQuery, EventAttendingStatusQueryVariables>;
 export const EventCategoriesDocument = gql`
     query EventCategories {
   eventCategories {
@@ -1623,6 +1668,7 @@ export const UpcomingEventsDocument = gql`
         startDate
         endDate
         doorsTime
+        attendeesCount
         venue {
           data {
             id
@@ -1685,6 +1731,38 @@ export function useUpcomingEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type UpcomingEventsQueryHookResult = ReturnType<typeof useUpcomingEventsQuery>;
 export type UpcomingEventsLazyQueryHookResult = ReturnType<typeof useUpcomingEventsLazyQuery>;
 export type UpcomingEventsQueryResult = Apollo.QueryResult<UpcomingEventsQuery, UpcomingEventsQueryVariables>;
+export const UpdateEventAttendingDocument = gql`
+    mutation UpdateEventAttending($eventId: ID!, $attending: Boolean!) {
+  updateEventAttending(id: $eventId, attending: $attending)
+}
+    `;
+export type UpdateEventAttendingMutationFn = Apollo.MutationFunction<UpdateEventAttendingMutation, UpdateEventAttendingMutationVariables>;
+
+/**
+ * __useUpdateEventAttendingMutation__
+ *
+ * To run a mutation, you first call `useUpdateEventAttendingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateEventAttendingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateEventAttendingMutation, { data, loading, error }] = useUpdateEventAttendingMutation({
+ *   variables: {
+ *      eventId: // value for 'eventId'
+ *      attending: // value for 'attending'
+ *   },
+ * });
+ */
+export function useUpdateEventAttendingMutation(baseOptions?: Apollo.MutationHookOptions<UpdateEventAttendingMutation, UpdateEventAttendingMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateEventAttendingMutation, UpdateEventAttendingMutationVariables>(UpdateEventAttendingDocument, options);
+      }
+export type UpdateEventAttendingMutationHookResult = ReturnType<typeof useUpdateEventAttendingMutation>;
+export type UpdateEventAttendingMutationResult = Apollo.MutationResult<UpdateEventAttendingMutation>;
+export type UpdateEventAttendingMutationOptions = Apollo.BaseMutationOptions<UpdateEventAttendingMutation, UpdateEventAttendingMutationVariables>;
 export const VenueDocument = gql`
     query Venue($id: ID!) {
   venue(id: $id) {

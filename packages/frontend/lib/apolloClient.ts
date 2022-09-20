@@ -35,7 +35,13 @@ export const createApolloClient = (jwt?: string) => {
       //   Authorization: jwt ? `Bearer ${jwt}` : getClientJwt(),
       // },
     }),
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({
+      // typePolicies: {
+      //   EventEntity: {
+      //     keyFields: ['id'],
+      //   },
+      // },
+    }),
   });
 };
 
