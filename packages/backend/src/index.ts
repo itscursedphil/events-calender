@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 
+import { registerGraphQlCustomizations } from './register';
+
 export default {
   /**
    * An asynchronous register function that runs before
@@ -7,7 +9,9 @@ export default {
    *
    * This gives you an opportunity to extend code.
    */
-  register(/* { strapi } */) {},
+  register({ strapi }) {
+    registerGraphQlCustomizations(strapi);
+  },
 
   /**
    * An asynchronous bootstrap function that runs before
