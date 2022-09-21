@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { FiPlus, FiX } from 'react-icons/fi';
 import {
   Badge,
@@ -13,6 +13,7 @@ import {
 import dayjs from 'dayjs';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 
 import {
   EventAttendeesCountWithIcon,
@@ -52,6 +53,7 @@ const AttendEventSelect: React.FC<{ id: Event['id'] }> = ({ id }) => {
       refetch: refetchEventAttendingStatus,
     },
   ] = useEventAttendingStatusLazyQuery({ variables: { id } });
+  const router = useRouter();
   const [updateEventAttendingMutation] = useUpdateEventAttendingMutation();
   const [eventQuery] = useEventLazyQuery({ variables: { id } });
 
@@ -62,13 +64,29 @@ const AttendEventSelect: React.FC<{ id: Event['id'] }> = ({ id }) => {
   const isAttending = (data || previousData)?.event?.data?.attributes
     ?.attending;
 
-  const handleButtonClick = async () => {
+  const handleButtonClick = useCallback(async () => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+
+    const nextAttending = !isAttending;
+
     await updateEventAttendingMutation({
-      variables: { eventId: id, attending: !isAttending },
+      variables: { eventId: id, attending: nextAttending },
+      optimisticResponse: { updateEventAttending: nextAttending },
     });
     refetchEventAttendingStatus();
     eventQuery();
-  };
+  }, [
+    eventQuery,
+    id,
+    isAttending,
+    refetchEventAttendingStatus,
+    router,
+    updateEventAttendingMutation,
+    user,
+  ]);
 
   return (
     <Skeleton

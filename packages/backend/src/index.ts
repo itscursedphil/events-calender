@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-
-import { registerGraphQlCustomizations } from './register';
+import registerEventExtensions from './api/event/extensions/register';
+import registerEventCategoryExtensions from './api/event-category/extensions/register';
 
 export default {
   /**
@@ -10,7 +9,8 @@ export default {
    * This gives you an opportunity to extend code.
    */
   register({ strapi }) {
-    registerGraphQlCustomizations(strapi);
+    registerEventExtensions(strapi);
+    registerEventCategoryExtensions(strapi);
   },
 
   /**
@@ -20,5 +20,5 @@ export default {
    * This gives you an opportunity to set up your data model,
    * run jobs, or perform some special logic.
    */
-  bootstrap(/* { strapi } */) {},
+  // bootstrap(/* { strapi } */) {},
 };
