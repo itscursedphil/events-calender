@@ -44,7 +44,6 @@ const AttendEventSelect: React.FC<{ id: Event['id'] }> = ({ id }) => {
     loading: state.loading,
     initialized: state.initialized,
   }));
-  // TODO: Fix cache issue
   const [
     eventStatusQuery,
     {
