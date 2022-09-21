@@ -29,6 +29,7 @@ import {
   EventQueryVariables,
   useEventAttendingStatusLazyQuery,
   useEventLazyQuery,
+  useEventQuery,
   useUpdateEventAttendingMutation,
 } from '../../generated/graphql';
 import useCurrentUserStore from '../../hooks/useCurrentUser';
@@ -55,7 +56,10 @@ const AttendEventSelect: React.FC<{ id: Event['id'] }> = ({ id }) => {
   ] = useEventAttendingStatusLazyQuery({ variables: { id } });
   const router = useRouter();
   const [updateEventAttendingMutation] = useUpdateEventAttendingMutation();
-  const [eventQuery] = useEventLazyQuery({ variables: { id } });
+  const [eventQuery] = useEventLazyQuery({
+    variables: { id },
+    fetchPolicy: 'network-only',
+  });
 
   useEffect(() => {
     eventStatusQuery();
@@ -116,38 +120,42 @@ const AttendEventSelect: React.FC<{ id: Event['id'] }> = ({ id }) => {
   );
 };
 
-const EventPage: NextPage<Event> = ({
-  id,
-  title,
-  description,
-  startDate,
-  venue,
-  category,
-  attendeesCount,
-}) => (
-  <>
-    <Head>
-      <title>{title}</title>
-    </Head>
-    <Box mb={2}>
-      <Badge>{category.name}</Badge>
-    </Box>
-    <Heading as="h2" size="lg">
-      {title}
-    </Heading>
-    <Box my={4}>
-      <Stack spacing={2}>
-        <EventStartDateWithIcon startDate={startDate} />
-        <VenueLinkWithIcon {...venue} />
-        <EventAttendeesCountWithIcon count={attendeesCount} compact={false} />
-      </Stack>
-    </Box>
-    <Box my={4} display="flex">
-      <AttendEventSelect id={id} />
-    </Box>
-    <Text>{description}</Text>
-  </>
-);
+const EventPage: NextPage<Event> = ({ id }) => {
+  const { data } = useEventQuery({ variables: { id } });
+
+  const eventData = data?.event?.data;
+
+  // TODO: Fix
+  if (!eventData) return null;
+
+  const { title, category, startDate, venue, attendeesCount, description } =
+    mapEventQueryResult<typeof eventData, Event>(eventData);
+
+  return (
+    <>
+      <Head>
+        <title>{title}</title>
+      </Head>
+      <Box mb={2}>
+        <Badge>{category.name}</Badge>
+      </Box>
+      <Heading as="h2" size="lg">
+        {title}
+      </Heading>
+      <Box my={4}>
+        <Stack spacing={2}>
+          <EventStartDateWithIcon startDate={startDate} />
+          <VenueLinkWithIcon {...venue} />
+          <EventAttendeesCountWithIcon count={attendeesCount} compact={false} />
+        </Stack>
+      </Box>
+      <Box my={4} display="flex">
+        <AttendEventSelect id={id} />
+      </Box>
+      <Text>{description}</Text>
+    </>
+  );
+};
 
 export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
   const apolloClient = createApolloClient();

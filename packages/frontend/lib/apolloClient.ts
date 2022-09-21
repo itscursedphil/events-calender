@@ -4,6 +4,7 @@ import {
   HttpLink,
   InMemoryCache,
   NormalizedCacheObject,
+  TypePolicies,
 } from '@apollo/client';
 import { AppProps } from 'next/app';
 
@@ -24,6 +25,40 @@ const getClientJwt = () => {
   return `Bearer ${clientJwt}`;
 };
 
+/* We need to apply cache policies to always merge the entity assigned to
+ * 'attributes' into the parent type entity. This is because of a design flaw in
+ * Strapi v4 that puts an entity into the 'attributes' property of an abstract
+ * parent entity. Because only the parent entity holds the entity id, which is
+ * the same for both, Apollo is unable to cache the entity assigned to
+ * 'attributes'.
+ *
+ * Example:
+ *
+ * query event: EventEntityResponse {
+ *    data: EventEntity {
+ *      id
+ *      attributes: Event {
+ *        title
+ *        ...
+ *      }
+ *    }
+ * }
+ *
+ * See: https://forum.strapi.io/t/discussion-regarding-the-complex-response-structure-for-rest-graphql-developer-experience/13400 */
+const createApolloCacheTypePolicies = (typenames: string[]) =>
+  typenames.reduce<TypePolicies>((typePolicies, typename) => {
+    return {
+      [`${typename}Entity`]: {
+        fields: {
+          attributes: {
+            merge: true,
+          },
+        },
+      },
+      ...typePolicies,
+    };
+  }, {});
+
 export const createApolloClient = (jwt?: string) => {
   return new ApolloClient({
     ssrMode: typeof window === 'undefined',
@@ -36,11 +71,11 @@ export const createApolloClient = (jwt?: string) => {
       // },
     }),
     cache: new InMemoryCache({
-      // typePolicies: {
-      //   EventEntity: {
-      //     keyFields: ['id'],
-      //   },
-      // },
+      typePolicies: createApolloCacheTypePolicies([
+        'Event',
+        'EventCategory',
+        'Venue',
+      ]),
     }),
   });
 };
