@@ -1,5 +1,6 @@
 import registerEventExtensions from './api/event/extensions/register';
 import registerEventCategoryExtensions from './api/event-category/extensions/register';
+import registerUsersPermissionsPluginExtensions from './extensions/users-permissions/register';
 
 export default {
   /**
@@ -11,6 +12,7 @@ export default {
   register({ strapi }) {
     registerEventExtensions(strapi);
     registerEventCategoryExtensions(strapi);
+    registerUsersPermissionsPluginExtensions(strapi);
   },
 
   /**
