@@ -1,0 +1,57 @@
+query CurrentUserCalendar(
+  $from: Int = 0
+  $limit: Int = 10
+  $startDate: DateTime!
+  $categories: [ID]
+  $venues: [ID]
+) {
+  me {
+    id
+    events(
+      filters: {
+        startDate: { gte: $startDate }
+        category: { id: { in: $categories } }
+        venue: { id: { in: $venues } }
+      }
+      pagination: { start: $from, limit: $limit }
+      sort: "startDate:asc"
+    ) {
+      data {
+        id
+        attributes {
+          title
+          description
+          startDate
+          endDate
+          doorsTime
+          attendeesCount
+          venue {
+            data {
+              id
+              attributes {
+                name
+              }
+            }
+          }
+          category {
+            data {
+              id
+              attributes {
+                name
+                slug
+              }
+            }
+          }
+        }
+      }
+      meta {
+        pagination {
+          total
+          page
+          pageSize
+          pageCount
+        }
+      }
+    }
+  }
+}

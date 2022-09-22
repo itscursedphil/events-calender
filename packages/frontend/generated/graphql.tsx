@@ -948,9 +948,18 @@ export type UsersPermissionsMe = {
   blocked?: Maybe<Scalars['Boolean']>;
   confirmed?: Maybe<Scalars['Boolean']>;
   email?: Maybe<Scalars['String']>;
+  events?: Maybe<EventEntityResponseCollection>;
   id: Scalars['ID'];
   role?: Maybe<UsersPermissionsMeRole>;
   username: Scalars['String'];
+};
+
+
+export type UsersPermissionsMeEventsArgs = {
+  filters?: InputMaybe<EventFiltersInput>;
+  pagination?: InputMaybe<PaginationArg>;
+  publicationState?: InputMaybe<PublicationState>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
 };
 
 export type UsersPermissionsMeRole = {
@@ -1246,6 +1255,17 @@ export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type CurrentUserQuery = { __typename?: 'Query', me?: { __typename?: 'UsersPermissionsMe', id: string, email?: string | null, username: string } | null };
 
+export type CurrentUserCalendarQueryVariables = Exact<{
+  from?: InputMaybe<Scalars['Int']>;
+  limit?: InputMaybe<Scalars['Int']>;
+  startDate: Scalars['DateTime'];
+  categories?: InputMaybe<Array<InputMaybe<Scalars['ID']>> | InputMaybe<Scalars['ID']>>;
+  venues?: InputMaybe<Array<InputMaybe<Scalars['ID']>> | InputMaybe<Scalars['ID']>>;
+}>;
+
+
+export type CurrentUserCalendarQuery = { __typename?: 'Query', me?: { __typename?: 'UsersPermissionsMe', id: string, events?: { __typename?: 'EventEntityResponseCollection', data: Array<{ __typename?: 'EventEntity', id?: string | null, attributes?: { __typename?: 'Event', title: string, description: string, startDate: any, endDate?: any | null, doorsTime?: any | null, attendeesCount?: number | null, venue?: { __typename?: 'VenueEntityResponse', data?: { __typename?: 'VenueEntity', id?: string | null, attributes?: { __typename?: 'Venue', name: string } | null } | null } | null, category?: { __typename?: 'EventCategoryEntityResponse', data?: { __typename?: 'EventCategoryEntity', id?: string | null, attributes?: { __typename?: 'EventCategory', name: string, slug: string } | null } | null } | null } | null }>, meta: { __typename?: 'ResponseCollectionMeta', pagination: { __typename?: 'Pagination', total: number, page: number, pageSize: number, pageCount: number } } } | null } | null };
+
 export type EventQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
@@ -1371,6 +1391,87 @@ export function useCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type CurrentUserQueryHookResult = ReturnType<typeof useCurrentUserQuery>;
 export type CurrentUserLazyQueryHookResult = ReturnType<typeof useCurrentUserLazyQuery>;
 export type CurrentUserQueryResult = Apollo.QueryResult<CurrentUserQuery, CurrentUserQueryVariables>;
+export const CurrentUserCalendarDocument = gql`
+    query CurrentUserCalendar($from: Int = 0, $limit: Int = 10, $startDate: DateTime!, $categories: [ID], $venues: [ID]) {
+  me {
+    id
+    events(
+      filters: {startDate: {gte: $startDate}, category: {id: {in: $categories}}, venue: {id: {in: $venues}}}
+      pagination: {start: $from, limit: $limit}
+      sort: "startDate:asc"
+    ) {
+      data {
+        id
+        attributes {
+          title
+          description
+          startDate
+          endDate
+          doorsTime
+          attendeesCount
+          venue {
+            data {
+              id
+              attributes {
+                name
+              }
+            }
+          }
+          category {
+            data {
+              id
+              attributes {
+                name
+                slug
+              }
+            }
+          }
+        }
+      }
+      meta {
+        pagination {
+          total
+          page
+          pageSize
+          pageCount
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useCurrentUserCalendarQuery__
+ *
+ * To run a query within a React component, call `useCurrentUserCalendarQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCurrentUserCalendarQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCurrentUserCalendarQuery({
+ *   variables: {
+ *      from: // value for 'from'
+ *      limit: // value for 'limit'
+ *      startDate: // value for 'startDate'
+ *      categories: // value for 'categories'
+ *      venues: // value for 'venues'
+ *   },
+ * });
+ */
+export function useCurrentUserCalendarQuery(baseOptions: Apollo.QueryHookOptions<CurrentUserCalendarQuery, CurrentUserCalendarQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CurrentUserCalendarQuery, CurrentUserCalendarQueryVariables>(CurrentUserCalendarDocument, options);
+      }
+export function useCurrentUserCalendarLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CurrentUserCalendarQuery, CurrentUserCalendarQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CurrentUserCalendarQuery, CurrentUserCalendarQueryVariables>(CurrentUserCalendarDocument, options);
+        }
+export type CurrentUserCalendarQueryHookResult = ReturnType<typeof useCurrentUserCalendarQuery>;
+export type CurrentUserCalendarLazyQueryHookResult = ReturnType<typeof useCurrentUserCalendarLazyQuery>;
+export type CurrentUserCalendarQueryResult = Apollo.QueryResult<CurrentUserCalendarQuery, CurrentUserCalendarQueryVariables>;
 export const EventDocument = gql`
     query Event($id: ID!) {
   event(id: $id) {
