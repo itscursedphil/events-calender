@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import {
   Button,
   FormControl,
@@ -7,7 +8,7 @@ import {
   Input,
   Stack,
 } from '@chakra-ui/react';
-import { ErrorMessage, Field, Form, Formik } from 'formik';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
 
 import useCurrentUserStore from '../../hooks/useCurrentUser';
@@ -23,13 +24,6 @@ export interface RegisterFormValues {
   password: string;
   passwordRepeat: string;
 }
-
-const initialFormValues = {
-  username: '',
-  email: '',
-  password: '',
-  passwordRepeat: '',
-};
 
 const useRegister = (): [
   (
@@ -72,11 +66,25 @@ const useRegister = (): [
 
 const RegisterForm: React.FC = () => {
   const router = useRouter();
-  const [register, { loading }] = useRegister();
+  const {
+    handleSubmit,
+    watch,
+    register: registerField,
+    formState: { errors, isSubmitting, isDirty, isValid, touchedFields },
+  } = useForm<RegisterFormValues>({
+    mode: 'onChange',
+    resolver: yupResolver(registerFormValidationSchema),
+  });
+  const [register] = useRegister();
   const setUser = useCurrentUserStore((state) => state.setUser);
 
+  const password = watch('password');
+  const passwordRepeat = watch('passwordRepeat');
+
+  const passwordsMatch = password === passwordRepeat;
+
   // TODO: Improve
-  const handleSubmit = async (values: RegisterFormValues) => {
+  const handleFormSubmit = async (values: RegisterFormValues) => {
     const user = await register(values);
 
     if (user) {
@@ -90,53 +98,48 @@ const RegisterForm: React.FC = () => {
   };
 
   return (
-    <Formik<RegisterFormValues>
-      initialValues={initialFormValues}
-      onSubmit={handleSubmit}
-      validationSchema={registerFormValidationSchema}
-    >
-      {({ values, touched, errors, dirty, isValid }) => {
-        const passwordsMatch = values.password === values.passwordRepeat;
-        return (
-          <Form noValidate>
-            <Stack spacing={4} align="stretch">
-              <FormControl isInvalid={touched.username && !!errors.username}>
-                <FormLabel>Username</FormLabel>
-                <Field as={Input} name="username" type="text" />
-                <ErrorMessage component={FormErrorMessage} name="username" />
-              </FormControl>
-              <FormControl isInvalid={touched.email && !!errors.email}>
-                <FormLabel>Email</FormLabel>
-                <Field as={Input} name="email" type="email" />
-                <ErrorMessage component={FormErrorMessage} name="email" />
-              </FormControl>
-              <FormControl isInvalid={touched.password && !!errors.password}>
-                <FormLabel>Passwort</FormLabel>
-                <Field as={Input} name="password" type="password" />
-                <ErrorMessage component={FormErrorMessage} name="password" />
-              </FormControl>
-              <FormControl
-                isInvalid={touched.passwordRepeat && !passwordsMatch}
-              >
-                <FormLabel>Passwort wiederholen</FormLabel>
-                <Field as={Input} name="passwordRepeat" type="password" />
-                {touched.passwordRepeat && !passwordsMatch && (
-                  <FormErrorMessage>
-                    Deine Passwörter stimmen nicht überein
-                  </FormErrorMessage>
-                )}
-              </FormControl>
-              <Button
-                type="submit"
-                disabled={loading || !dirty || !isValid || !passwordsMatch}
-              >
-                Registrieren
-              </Button>
-            </Stack>
-          </Form>
-        );
-      }}
-    </Formik>
+    <form onSubmit={handleSubmit(handleFormSubmit)} noValidate>
+      <Stack spacing={4} align="stretch">
+        <FormControl isInvalid={touchedFields.username && !!errors.username}>
+          <FormLabel>Username</FormLabel>
+          <Input {...registerField('username')} />
+          <FormErrorMessage>
+            {errors.username && errors.username.message}
+          </FormErrorMessage>
+        </FormControl>
+        <FormControl isInvalid={touchedFields.email && !!errors.email}>
+          <FormLabel>Email</FormLabel>
+          <Input type="email" {...registerField('email')} />
+          <FormErrorMessage>
+            {errors.email && errors.email.message}
+          </FormErrorMessage>
+        </FormControl>
+        <FormControl isInvalid={touchedFields.password && !!errors.password}>
+          <FormLabel>Passwort</FormLabel>
+          <Input type="password" {...registerField('password')} />
+          <FormErrorMessage>
+            {errors.password && errors.password.message}
+          </FormErrorMessage>{' '}
+        </FormControl>
+        <FormControl
+          isInvalid={touchedFields.passwordRepeat && !passwordsMatch}
+        >
+          <FormLabel>Passwort wiederholen</FormLabel>
+          <Input type="password" {...registerField('passwordRepeat')} />
+          {touchedFields.passwordRepeat && !passwordsMatch && (
+            <FormErrorMessage>
+              Deine Passwörter stimmen nicht überein
+            </FormErrorMessage>
+          )}
+        </FormControl>
+        <Button
+          type="submit"
+          disabled={isSubmitting || !isDirty || !isValid || !passwordsMatch}
+        >
+          Registrieren
+        </Button>
+      </Stack>
+    </form>
   );
 };
 

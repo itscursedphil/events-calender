@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import {
   Button,
   FormControl,
@@ -7,7 +8,7 @@ import {
   Input,
   Stack,
 } from '@chakra-ui/react';
-import { ErrorMessage, Field, Form, Formik } from 'formik';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
 
 import useCurrentUserStore from '../../hooks/useCurrentUser';
@@ -21,11 +22,6 @@ interface LoginFormValues {
   email: string;
   password: string;
 }
-
-const initialFormValues: LoginFormValues = {
-  email: '',
-  password: '',
-};
 
 const useLogin = (): [
   (
@@ -64,7 +60,15 @@ const useLogin = (): [
 
 const LoginForm: React.FC = () => {
   const router = useRouter();
-  const [login, { loading }] = useLogin();
+  const {
+    handleSubmit,
+    register,
+    formState: { errors, isSubmitting, isDirty, isValid, touchedFields },
+  } = useForm<LoginFormValues>({
+    mode: 'onChange',
+    resolver: yupResolver(loginFormValidationSchema),
+  });
+  const [login] = useLogin();
   const setUser = useCurrentUserStore((state) => state.setUser);
 
   // TODO: Improve
@@ -82,31 +86,27 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <Formik<LoginFormValues>
-      initialValues={initialFormValues}
-      onSubmit={handleFormSubmit}
-      validationSchema={loginFormValidationSchema}
-    >
-      {({ errors, touched, isValid, dirty }) => (
-        <Form noValidate>
-          <Stack spacing={4} align="stretch">
-            <FormControl isInvalid={touched.email && !!errors.email}>
-              <FormLabel>Email</FormLabel>
-              <Field as={Input} name="email" type="email" />
-              <ErrorMessage component={FormErrorMessage} name="email" />
-            </FormControl>
-            <FormControl isInvalid={touched.password && !!errors.password}>
-              <FormLabel>Passwort</FormLabel>
-              <Field as={Input} name="password" type="password" />
-              <ErrorMessage component={FormErrorMessage} name="password" />
-            </FormControl>
-            <Button type="submit" disabled={loading || !dirty || !isValid}>
-              Anmelden
-            </Button>
-          </Stack>
-        </Form>
-      )}
-    </Formik>
+    <form onSubmit={handleSubmit(handleFormSubmit)} noValidate>
+      <Stack spacing={4} align="stretch">
+        <FormControl isInvalid={touchedFields.email && !!errors.email}>
+          <FormLabel>Email</FormLabel>
+          <Input type="email" {...register('email')} />
+          <FormErrorMessage>
+            {errors.email && errors.email.message}
+          </FormErrorMessage>
+        </FormControl>
+        <FormControl isInvalid={touchedFields.password && !!errors.password}>
+          <FormLabel>Passwort</FormLabel>
+          <Input type="password" {...register('password')} />
+          <FormErrorMessage>
+            {errors.password && errors.password.message}
+          </FormErrorMessage>
+        </FormControl>
+        <Button type="submit" disabled={isSubmitting || !isDirty || !isValid}>
+          Anmelden
+        </Button>
+      </Stack>
+    </form>
   );
 };
 
