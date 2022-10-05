@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Box, Heading, Stack } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import { NextPage } from 'next';
@@ -11,17 +11,12 @@ import { useCurrentUserCalendarQuery } from '../../generated/graphql';
 import { mapEventQueryResult } from '../../lib/event';
 
 const CalendarPage: NextPage = () => {
-  const [startDate, setStartDate] = useState<string | null>(null);
+  const startDate = useMemo(() => dayjs().startOf('day').toISOString(), []);
   const { data } = useCurrentUserCalendarQuery({
-    skip: !startDate,
     variables: {
       startDate,
     },
   });
-
-  useEffect(() => {
-    setStartDate(dayjs().toISOString());
-  }, []);
 
   const events = (data?.me?.events?.data || []).map((event) =>
     mapEventQueryResult<typeof event, UpcomingEvent>(event)

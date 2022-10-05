@@ -14,4 +14,9 @@ export const middleware = (req: NextRequest) => {
   ) {
     return NextResponse.redirect(new URL('/', req.url));
   }
+
+  // If user is not logged in and wants to access authenticated routes, redirect
+  if (req.nextUrl.pathname.startsWith('/me') && !authCookie) {
+    return NextResponse.redirect(new URL('/login', req.url));
+  }
 };

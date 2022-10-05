@@ -1,6 +1,9 @@
 import registerEventExtensions from './api/event/extensions/register';
 import registerEventCategoryExtensions from './api/event-category/extensions/register';
+import registerVenueExtensions from './api/venue/extensions/register';
+import registerUploadPluginExtensions from './extensions/upload/register';
 import registerUsersPermissionsPluginExtensions from './extensions/users-permissions/register';
+import initializeSampleData from './lib/populate';
 
 export default {
   /**
@@ -12,7 +15,9 @@ export default {
   register({ strapi }) {
     registerEventExtensions(strapi);
     registerEventCategoryExtensions(strapi);
+    registerVenueExtensions(strapi);
     registerUsersPermissionsPluginExtensions(strapi);
+    registerUploadPluginExtensions(strapi);
   },
 
   /**
@@ -22,5 +27,7 @@ export default {
    * This gives you an opportunity to set up your data model,
    * run jobs, or perform some special logic.
    */
-  // bootstrap(/* { strapi } */) {},
+  bootstrap: async ({ strapi }) => {
+    // await initializeSampleData(strapi);
+  },
 };

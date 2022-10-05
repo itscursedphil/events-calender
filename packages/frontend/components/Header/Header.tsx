@@ -91,12 +91,18 @@ const MobileMenu = () => {
           <Stack>
             {!!user && (
               <>
-                <Box>
+                <Stack>
                   <Box display="flex" alignItems="center">
                     <Avatar name={user.username} size="sm" mr={3} />
                     <Text>{user.username}</Text>
                   </Box>
-                </Box>
+                </Stack>
+                <NextLink href="/me/calendar" passHref>
+                  <Link>
+                    {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+                    <span onClick={toggle}>Mein Kalender</span>
+                  </Link>
+                </NextLink>
                 <Divider />
               </>
             )}
