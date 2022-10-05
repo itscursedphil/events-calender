@@ -125,6 +125,12 @@ const MobileMenu = () => {
               </Link>
             </NextLink>
             <Divider />
+            <NextLink href="/events/add" passHref>
+              <Link>
+                {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+                <span onClick={toggle}>Event erstellen</span>
+              </Link>
+            </NextLink>
             <UserAwareAuthActionLink onClick={toggle} />
           </Stack>
         </DrawerBody>
