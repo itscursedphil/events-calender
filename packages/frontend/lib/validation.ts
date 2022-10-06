@@ -8,6 +8,10 @@ export const PASSWORD_MAX_LENGTH = 24;
 // At least one lowercase, one uppercase, one number and one special character
 export const PASSWORD_VERY_SECURE_REGEX =
   /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*_-]).{8,}$/;
+export const EVENT_TITLE_MIN_LENGTH = 3;
+export const EVENT_TITLE_MAX_LENGTH = 255;
+export const EVENT_DESCRIPTION_MIN_LENGTH = 40;
+export const EVENT_DESCRIPTION_MAX_LENGTH = 5000;
 
 export const formErrors = {
   username: {
@@ -26,6 +30,19 @@ export const formErrors = {
     maxLength: `Dein Passwort darf maximal ${PASSWORD_MAX_LENGTH} Zeichen lang sein`,
     secure:
       'Dein Passwort muss mindestens einen Großbuchstaben, einen Kleinbuchstaben, eine Nummer sowie ein Sonderzeichen enthalten',
+  },
+  eventTitle: {
+    required: 'Bitte gib einen Titel für dein Event an',
+    minLength: `Der Titel muss mindestes ${EVENT_TITLE_MIN_LENGTH} Zeichen lang sein`,
+    maxLength: `Der Titel darf maximal ${EVENT_TITLE_MAX_LENGTH} Zeichen lang sein`,
+  },
+  eventDescription: {
+    required: 'Bitte füge deinem Event eine Beschreibung hinzu',
+    minLength: `Die Beschreibung muss mindestens ${EVENT_DESCRIPTION_MIN_LENGTH} Zeichen lang sein`,
+    maxLength: `Die Beschreibung darf maximal ${EVENT_DESCRIPTION_MAX_LENGTH} Zeichen lang sein`,
+  },
+  startDate: {
+    required: 'Bitte gib ein Datum für dein Event an',
   },
 };
 
@@ -50,4 +67,16 @@ export const loginFormValidationSchema = Yup.object().shape({
     .email(formErrors.email.invalid)
     .required(formErrors.email.required),
   password: Yup.string().required(formErrors.password.required),
+});
+
+export const eventCreateFormValidationSchema = Yup.object().shape({
+  title: Yup.string()
+    .min(EVENT_TITLE_MIN_LENGTH, formErrors.eventTitle.minLength)
+    .max(EVENT_TITLE_MAX_LENGTH, formErrors.eventTitle.maxLength)
+    .required(formErrors.eventTitle.required),
+  description: Yup.string()
+    .min(EVENT_DESCRIPTION_MIN_LENGTH, formErrors.eventDescription.minLength)
+    .max(EVENT_DESCRIPTION_MAX_LENGTH, formErrors.eventDescription.maxLength)
+    .required(formErrors.eventDescription.required),
+  startDate: Yup.string().required(formErrors.startDate),
 });

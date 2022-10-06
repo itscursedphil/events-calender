@@ -148,12 +148,6 @@ export type EventCategoryFiltersInput = {
   slug?: InputMaybe<StringFilterInput>;
 };
 
-export type EventCategoryInput = {
-  events?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  name?: InputMaybe<Scalars['String']>;
-  slug?: InputMaybe<Scalars['String']>;
-};
-
 export type EventEntity = {
   __typename?: 'EventEntity';
   attributes?: Maybe<Event>;
@@ -347,18 +341,12 @@ export type Mutation = {
   /** Change user password. Confirm with the current password. */
   changePassword?: Maybe<UsersPermissionsLoginPayload>;
   createEvent?: Maybe<EventEntityResponse>;
-  createEventCategory?: Maybe<EventCategoryEntityResponse>;
-  createUploadFile?: Maybe<UploadFileEntityResponse>;
-  createUploadFolder?: Maybe<UploadFolderEntityResponse>;
   /** Create a new role */
   createUsersPermissionsRole?: Maybe<UsersPermissionsCreateRolePayload>;
   /** Create a new user */
   createUsersPermissionsUser: UsersPermissionsUserEntityResponse;
   createVenue?: Maybe<VenueEntityResponse>;
   deleteEvent?: Maybe<EventEntityResponse>;
-  deleteEventCategory?: Maybe<EventCategoryEntityResponse>;
-  deleteUploadFile?: Maybe<UploadFileEntityResponse>;
-  deleteUploadFolder?: Maybe<UploadFolderEntityResponse>;
   /** Delete an existing role */
   deleteUsersPermissionsRole?: Maybe<UsersPermissionsDeleteRolePayload>;
   /** Delete an existing user */
@@ -377,10 +365,7 @@ export type Mutation = {
   resetPassword?: Maybe<UsersPermissionsLoginPayload>;
   updateEvent?: Maybe<EventEntityResponse>;
   updateEventAttending?: Maybe<Scalars['Boolean']>;
-  updateEventCategory?: Maybe<EventCategoryEntityResponse>;
   updateFileInfo: UploadFileEntityResponse;
-  updateUploadFile?: Maybe<UploadFileEntityResponse>;
-  updateUploadFolder?: Maybe<UploadFolderEntityResponse>;
   /** Update an existing role */
   updateUsersPermissionsRole?: Maybe<UsersPermissionsUpdateRolePayload>;
   /** Update an existing user */
@@ -402,21 +387,6 @@ export type MutationCreateEventArgs = {
 };
 
 
-export type MutationCreateEventCategoryArgs = {
-  data: EventCategoryInput;
-};
-
-
-export type MutationCreateUploadFileArgs = {
-  data: UploadFileInput;
-};
-
-
-export type MutationCreateUploadFolderArgs = {
-  data: UploadFolderInput;
-};
-
-
 export type MutationCreateUsersPermissionsRoleArgs = {
   data: UsersPermissionsRoleInput;
 };
@@ -433,21 +403,6 @@ export type MutationCreateVenueArgs = {
 
 
 export type MutationDeleteEventArgs = {
-  id: Scalars['ID'];
-};
-
-
-export type MutationDeleteEventCategoryArgs = {
-  id: Scalars['ID'];
-};
-
-
-export type MutationDeleteUploadFileArgs = {
-  id: Scalars['ID'];
-};
-
-
-export type MutationDeleteUploadFolderArgs = {
   id: Scalars['ID'];
 };
 
@@ -519,27 +474,9 @@ export type MutationUpdateEventAttendingArgs = {
 };
 
 
-export type MutationUpdateEventCategoryArgs = {
-  data: EventCategoryInput;
-  id: Scalars['ID'];
-};
-
-
 export type MutationUpdateFileInfoArgs = {
   id: Scalars['ID'];
   info?: InputMaybe<FileInfoInput>;
-};
-
-
-export type MutationUpdateUploadFileArgs = {
-  data: UploadFileInput;
-  id: Scalars['ID'];
-};
-
-
-export type MutationUpdateUploadFolderArgs = {
-  data: UploadFolderInput;
-  id: Scalars['ID'];
 };
 
 
@@ -825,25 +762,6 @@ export type UploadFileFiltersInput = {
   width?: InputMaybe<IntFilterInput>;
 };
 
-export type UploadFileInput = {
-  alternativeText?: InputMaybe<Scalars['String']>;
-  caption?: InputMaybe<Scalars['String']>;
-  ext?: InputMaybe<Scalars['String']>;
-  folder?: InputMaybe<Scalars['ID']>;
-  folderPath?: InputMaybe<Scalars['String']>;
-  formats?: InputMaybe<Scalars['JSON']>;
-  hash?: InputMaybe<Scalars['String']>;
-  height?: InputMaybe<Scalars['Int']>;
-  mime?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
-  previewUrl?: InputMaybe<Scalars['String']>;
-  provider?: InputMaybe<Scalars['String']>;
-  provider_metadata?: InputMaybe<Scalars['JSON']>;
-  size?: InputMaybe<Scalars['Float']>;
-  url?: InputMaybe<Scalars['String']>;
-  width?: InputMaybe<Scalars['Int']>;
-};
-
 export type UploadFileRelationResponseCollection = {
   __typename?: 'UploadFileRelationResponseCollection';
   data: Array<UploadFileEntity>;
@@ -905,15 +823,6 @@ export type UploadFolderFiltersInput = {
   path?: InputMaybe<StringFilterInput>;
   pathId?: InputMaybe<IntFilterInput>;
   updatedAt?: InputMaybe<DateTimeFilterInput>;
-};
-
-export type UploadFolderInput = {
-  children?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  files?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  name?: InputMaybe<Scalars['String']>;
-  parent?: InputMaybe<Scalars['ID']>;
-  path?: InputMaybe<Scalars['String']>;
-  pathId?: InputMaybe<Scalars['Int']>;
 };
 
 export type UploadFolderRelationResponseCollection = {
@@ -1310,6 +1219,13 @@ export type RegisterMutationVariables = Exact<{
 
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UsersPermissionsLoginPayload', jwt?: string | null, user: { __typename?: 'UsersPermissionsMe', id: string, username: string, email?: string | null } } };
+
+export type SearchVenueQueryVariables = Exact<{
+  term: Scalars['String'];
+}>;
+
+
+export type SearchVenueQuery = { __typename?: 'Query', venues?: { __typename?: 'VenueEntityResponseCollection', data: Array<{ __typename?: 'VenueEntity', id?: string | null, attributes?: { __typename?: 'Venue', name: string } | null }> } | null };
 
 export type UpcomingEventsQueryVariables = Exact<{
   from?: InputMaybe<Scalars['Int']>;
@@ -1754,6 +1670,46 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const SearchVenueDocument = gql`
+    query SearchVenue($term: String!) {
+  venues(filters: {name: {containsi: $term}}) {
+    data {
+      id
+      attributes {
+        name
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useSearchVenueQuery__
+ *
+ * To run a query within a React component, call `useSearchVenueQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchVenueQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchVenueQuery({
+ *   variables: {
+ *      term: // value for 'term'
+ *   },
+ * });
+ */
+export function useSearchVenueQuery(baseOptions: Apollo.QueryHookOptions<SearchVenueQuery, SearchVenueQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchVenueQuery, SearchVenueQueryVariables>(SearchVenueDocument, options);
+      }
+export function useSearchVenueLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchVenueQuery, SearchVenueQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchVenueQuery, SearchVenueQueryVariables>(SearchVenueDocument, options);
+        }
+export type SearchVenueQueryHookResult = ReturnType<typeof useSearchVenueQuery>;
+export type SearchVenueLazyQueryHookResult = ReturnType<typeof useSearchVenueLazyQuery>;
+export type SearchVenueQueryResult = Apollo.QueryResult<SearchVenueQuery, SearchVenueQueryVariables>;
 export const UpcomingEventsDocument = gql`
     query UpcomingEvents($from: Int = 0, $limit: Int = 10, $startDate: DateTime!, $categories: [ID], $venues: [ID]) {
   events(

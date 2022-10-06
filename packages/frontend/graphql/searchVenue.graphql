@@ -1,0 +1,10 @@
+query SearchVenue($term: String!) {
+  venues(filters: { name: { containsi: $term } }) {
+    data {
+      id
+      attributes {
+        name
+      }
+    }
+  }
+}
