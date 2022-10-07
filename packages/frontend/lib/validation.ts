@@ -118,7 +118,7 @@ export const eventCreateFormValidationSchema = Yup.object().shape({
       (value, { parent }) =>
         !value ||
         !parent?.startDate ||
-        testEndDateIsAfterStartDate(value, parent.startDate)
+        testEndDateIsAfterStartDate(parent.startDate, value)
     ),
   categoryId: Yup.string().required(formErrors.eventCategory.required),
   venueId: Yup.string().required(formErrors.eventVenue.required),

@@ -13,16 +13,20 @@ import {
   Textarea,
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
+import dayjs from 'dayjs';
 import { debounce } from 'lodash';
 import { NextPage } from 'next';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 
 import { SearchBox } from '../../components/SearchBox';
 import { SearchBoxProps } from '../../components/SearchBox/SearchBox';
 import {
+  useCreateEventMutation,
   useEventCategoriesQuery,
   useSearchVenueLazyQuery,
 } from '../../generated/graphql';
+import { createSlugFromString } from '../../lib/slug';
 import { eventCreateFormValidationSchema } from '../../lib/validation';
 
 interface EventCreateFormValues {
@@ -91,6 +95,8 @@ const EventCreateForm: React.FC = () => {
     resolver: yupResolver(eventCreateFormValidationSchema),
   });
   const { data } = useEventCategoriesQuery();
+  const [createEventMutation] = useCreateEventMutation();
+  const router = useRouter();
 
   const eventCategories = data?.eventCategories?.data || [];
 
@@ -105,13 +111,45 @@ const EventCreateForm: React.FC = () => {
     [setValue]
   );
 
+  // TODO: Correctly handle errors
+  const handleCreateEvent = useCallback(
+    async (values: EventCreateFormValues) => {
+      try {
+        const { data: eventCreateData, errors: eventCreateErrors } =
+          await createEventMutation({
+            variables: {
+              ...values,
+              startDate: dayjs(values.startDate).toISOString(),
+              endDate: values.endDate
+                ? dayjs(values.endDate).toISOString()
+                : undefined,
+            },
+          });
+
+        if (!eventCreateData?.createEvent?.data || eventCreateErrors?.length) {
+          if (eventCreateErrors?.length) {
+            console.log(eventCreateErrors);
+          }
+
+          throw new Error('Error creating event');
+        }
+
+        const { id: eventId = '' } = eventCreateData.createEvent.data;
+        const { title: eventTitle = '' } =
+          eventCreateData.createEvent.data.attributes || {};
+
+        const slug = createSlugFromString(eventTitle, eventId || '');
+
+        router.push(`/events/${slug}`);
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    [createEventMutation, router]
+  );
+
   return (
-    <form
-      onSubmit={handleSubmit((values) => {
-        console.log(values);
-      })}
-      noValidate
-    >
+    <form onSubmit={handleSubmit(handleCreateEvent)} noValidate>
       <Stack spacing={4} align="stretch">
         <FormControl
           isRequired
@@ -167,7 +205,12 @@ const EventCreateForm: React.FC = () => {
           </FormErrorMessage>
         </FormControl>
         <VenueSearch error={errors.venueId} onSelect={handleVenueSelect} />
-        <Button type="submit" disabled={isSubmitting || !isDirty || !isValid}>
+        <Button
+          type="submit"
+          disabled={isSubmitting || !isDirty || !isValid}
+          isLoading={isSubmitting}
+          loadingText="Submitting"
+        >
           Erstellen
         </Button>
       </Stack>

@@ -1159,6 +1159,18 @@ export type VenueRelationResponseCollection = {
   data: Array<VenueEntity>;
 };
 
+export type CreateEventMutationVariables = Exact<{
+  title: Scalars['String'];
+  description: Scalars['String'];
+  startDate: Scalars['DateTime'];
+  endDate?: InputMaybe<Scalars['DateTime']>;
+  categoryId: Scalars['ID'];
+  venueId: Scalars['ID'];
+}>;
+
+
+export type CreateEventMutation = { __typename?: 'Mutation', createEvent?: { __typename?: 'EventEntityResponse', data?: { __typename?: 'EventEntity', id?: string | null, attributes?: { __typename?: 'Event', title: string, description: string, startDate: any, endDate?: any | null, doorsTime?: any | null, category?: { __typename?: 'EventCategoryEntityResponse', data?: { __typename?: 'EventCategoryEntity', id?: string | null, attributes?: { __typename?: 'EventCategory', name: string, slug: string } | null } | null } | null, venue?: { __typename?: 'VenueEntityResponse', data?: { __typename?: 'VenueEntity', id?: string | null, attributes?: { __typename?: 'Venue', name: string, description?: string | null, website?: string | null, address: { __typename?: 'ComponentLocationAddress', street: string, streetNumber: string, postcode: number } } | null } | null } | null } | null } | null } | null };
+
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1271,6 +1283,79 @@ export type VenuesQueryVariables = Exact<{
 export type VenuesQuery = { __typename?: 'Query', venues?: { __typename?: 'VenueEntityResponseCollection', data: Array<{ __typename?: 'VenueEntity', id?: string | null, attributes?: { __typename?: 'Venue', name: string, description?: string | null, website?: string | null, address: { __typename?: 'ComponentLocationAddress', id: string, street: string, streetNumber: string, postcode: number } } | null }>, meta: { __typename?: 'ResponseCollectionMeta', pagination: { __typename?: 'Pagination', total: number, page: number, pageSize: number, pageCount: number } } } | null };
 
 
+export const CreateEventDocument = gql`
+    mutation CreateEvent($title: String!, $description: String!, $startDate: DateTime!, $endDate: DateTime, $categoryId: ID!, $venueId: ID!) {
+  createEvent(
+    data: {title: $title, description: $description, startDate: $startDate, endDate: $endDate, category: $categoryId, venue: $venueId}
+  ) {
+    data {
+      id
+      attributes {
+        title
+        description
+        startDate
+        endDate
+        doorsTime
+        category {
+          data {
+            id
+            attributes {
+              name
+              slug
+            }
+          }
+        }
+        venue {
+          data {
+            id
+            attributes {
+              name
+              description
+              website
+              address {
+                street
+                streetNumber
+                postcode
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+export type CreateEventMutationFn = Apollo.MutationFunction<CreateEventMutation, CreateEventMutationVariables>;
+
+/**
+ * __useCreateEventMutation__
+ *
+ * To run a mutation, you first call `useCreateEventMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateEventMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createEventMutation, { data, loading, error }] = useCreateEventMutation({
+ *   variables: {
+ *      title: // value for 'title'
+ *      description: // value for 'description'
+ *      startDate: // value for 'startDate'
+ *      endDate: // value for 'endDate'
+ *      categoryId: // value for 'categoryId'
+ *      venueId: // value for 'venueId'
+ *   },
+ * });
+ */
+export function useCreateEventMutation(baseOptions?: Apollo.MutationHookOptions<CreateEventMutation, CreateEventMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateEventMutation, CreateEventMutationVariables>(CreateEventDocument, options);
+      }
+export type CreateEventMutationHookResult = ReturnType<typeof useCreateEventMutation>;
+export type CreateEventMutationResult = Apollo.MutationResult<CreateEventMutation>;
+export type CreateEventMutationOptions = Apollo.BaseMutationOptions<CreateEventMutation, CreateEventMutationVariables>;
 export const CurrentUserDocument = gql`
     query CurrentUser {
   me {

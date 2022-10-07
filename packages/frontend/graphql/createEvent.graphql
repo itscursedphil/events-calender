@@ -1,0 +1,54 @@
+mutation CreateEvent(
+  $title: String!
+  $description: String!
+  $startDate: DateTime!
+  $endDate: DateTime
+  $categoryId: ID!
+  $venueId: ID!
+) {
+  createEvent(
+    data: {
+      title: $title
+      description: $description
+      startDate: $startDate
+      endDate: $endDate
+      category: $categoryId
+      venue: $venueId
+    }
+  ) {
+    data {
+      id
+      attributes {
+        title
+        description
+        startDate
+        endDate
+        doorsTime
+        category {
+          data {
+            id
+            attributes {
+              name
+              slug
+            }
+          }
+        }
+        venue {
+          data {
+            id
+            attributes {
+              name
+              description
+              website
+              address {
+                street
+                streetNumber
+                postcode
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
