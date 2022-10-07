@@ -119,7 +119,7 @@ const RegisterForm: React.FC = () => {
           <Input type="password" {...registerField('password')} />
           <FormErrorMessage>
             {errors.password && errors.password.message}
-          </FormErrorMessage>{' '}
+          </FormErrorMessage>
         </FormControl>
         <FormControl
           isInvalid={touchedFields.passwordRepeat && !passwordsMatch}

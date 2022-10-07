@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import * as Yup from 'yup';
 
 // TODO: Research best practices for maximum lengths
@@ -12,6 +13,14 @@ export const EVENT_TITLE_MIN_LENGTH = 3;
 export const EVENT_TITLE_MAX_LENGTH = 255;
 export const EVENT_DESCRIPTION_MIN_LENGTH = 40;
 export const EVENT_DESCRIPTION_MAX_LENGTH = 5000;
+
+export const testDateIsInFuture = (datetime: string) =>
+  dayjs(datetime) > dayjs();
+
+export const testEndDateIsAfterStartDate = (
+  startDate: string,
+  endDate: string
+) => dayjs(endDate) > dayjs(startDate);
 
 export const formErrors = {
   username: {
@@ -43,6 +52,18 @@ export const formErrors = {
   },
   startDate: {
     required: 'Bitte gib ein Datum für dein Event an',
+    inFuture: 'Der Beginn deiner Veranstaltung muss in der Zukunft liegen',
+  },
+  endDate: {
+    inFuture: 'Das Ende deiner Veranstaltung muss in der Zukunft liegen',
+    endDateAfterStartDate:
+      'Das Ende deiner Veranstaltung muss nach dem Beginn liegen',
+  },
+  eventCategory: {
+    required: `Bitte wähle eine Kategorie für deine Veranstaltung aus`,
+  },
+  eventVenue: {
+    required: 'Bitte wähle einen Ort für deine Veranstaltung aus',
   },
 };
 
@@ -78,5 +99,27 @@ export const eventCreateFormValidationSchema = Yup.object().shape({
     .min(EVENT_DESCRIPTION_MIN_LENGTH, formErrors.eventDescription.minLength)
     .max(EVENT_DESCRIPTION_MAX_LENGTH, formErrors.eventDescription.maxLength)
     .required(formErrors.eventDescription.required),
-  startDate: Yup.string().required(formErrors.startDate),
+  startDate: Yup.string()
+    .test(
+      'startdate-in-future',
+      formErrors.startDate.inFuture,
+      (value) => !value || testDateIsInFuture(value)
+    )
+    .required(formErrors.startDate.required),
+  endDate: Yup.string()
+    .test(
+      'enddate-in-future',
+      formErrors.endDate.inFuture,
+      (value) => !value || testDateIsInFuture(value)
+    )
+    .test(
+      'enddate-after-startdate',
+      formErrors.endDate.endDateAfterStartDate,
+      (value, { parent }) =>
+        !value ||
+        !parent?.startDate ||
+        testEndDateIsAfterStartDate(value, parent.startDate)
+    ),
+  categoryId: Yup.string().required(formErrors.eventCategory.required),
+  venueId: Yup.string().required(formErrors.eventVenue.required),
 });

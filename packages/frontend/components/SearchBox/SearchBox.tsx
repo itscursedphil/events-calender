@@ -1,7 +1,9 @@
-import React, { PropsWithChildren, useEffect } from 'react';
+import React, { PropsWithChildren, useState } from 'react';
+import { FieldError } from 'react-hook-form';
 import {
   Box,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Input,
   InputGroup,
@@ -28,7 +30,13 @@ const SearchBoxResults: React.FC<PropsWithChildren> = ({ children }) => (
 export type SearchBoxProps<Item> = Pick<
   UseComboboxProps<Item>,
   'id' | 'onInputValueChange' | 'items' | 'itemToString'
-> & { label: string; loading?: boolean; onSelect?: (item: Item) => void };
+> & {
+  label: string;
+  isLoading?: boolean;
+  isRequired?: boolean;
+  error?: FieldError;
+  onSelect?: (item: Item | null | undefined) => void;
+};
 
 const SearchBox: <Item>(props: SearchBoxProps<Item>) => JSX.Element = ({
   id,
@@ -36,9 +44,11 @@ const SearchBox: <Item>(props: SearchBoxProps<Item>) => JSX.Element = ({
   items,
   label,
   itemToString,
-  loading,
+  isLoading,
+  error,
   onSelect,
 }) => {
+  const [isTouched, setIsTouched] = useState(false);
   const {
     isOpen,
     inputValue,
@@ -48,27 +58,34 @@ const SearchBox: <Item>(props: SearchBoxProps<Item>) => JSX.Element = ({
     getComboboxProps,
     highlightedIndex,
     getItemProps,
-    selectedItem,
   } = useCombobox({
     onInputValueChange,
     items,
     itemToString,
     id,
+    onSelectedItemChange: ({ selectedItem }) =>
+      onSelect ? onSelect(selectedItem) : undefined,
+    onStateChange: ({
+      inputValue: currentInputValue,
+      isOpen: currentIsOpen,
+    }) => {
+      if (!!currentInputValue || (currentIsOpen && !isTouched))
+        setIsTouched(true);
+    },
   });
 
-  useEffect(() => {
-    if (selectedItem && onSelect) onSelect(selectedItem);
-  }, [onSelect, selectedItem]);
-
   return (
-    <FormControl>
+    <FormControl isRequired isInvalid={isTouched && !!error}>
       <FormLabel {...getLabelProps()}>{label}</FormLabel>
       <Box {...getComboboxProps()}>
         <InputGroup>
           <Input {...getInputProps()} />
-          {typeof loading !== 'undefined' && (
+          {typeof isLoading !== 'undefined' && (
             <InputRightElement>
-              <Spinner size="xs" visibility={loading ? 'initial' : 'hidden'} />
+              <Spinner
+                size="xs"
+                visibility={isLoading ? 'initial' : 'hidden'}
+              />
             </InputRightElement>
           )}
         </InputGroup>
@@ -91,6 +108,7 @@ const SearchBox: <Item>(props: SearchBoxProps<Item>) => JSX.Element = ({
           </SearchBoxResults>
         )}
       </Box>
+      <FormErrorMessage>{error && error.message}</FormErrorMessage>
     </FormControl>
   );
 };
