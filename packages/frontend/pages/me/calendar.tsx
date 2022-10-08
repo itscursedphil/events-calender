@@ -1,18 +1,17 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Box, Heading, Stack } from '@chakra-ui/react';
+import React, { useMemo } from 'react';
+import { Heading } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import { NextPage } from 'next';
 import Head from 'next/head';
 
-import UpcomingEventsList, {
-  UpcomingEvent,
-} from '../../components/Event/UpcomingEventsList';
+import EventsList, { UpcomingEvent } from '../../components/Event/EventsList';
 import { useCurrentUserCalendarQuery } from '../../generated/graphql';
 import { mapEventQueryResult } from '../../lib/event';
 
+// TODO: Server render page
 const CalendarPage: NextPage = () => {
   const startDate = useMemo(() => dayjs().startOf('day').toISOString(), []);
-  const { data } = useCurrentUserCalendarQuery({
+  const { data, loading } = useCurrentUserCalendarQuery({
     variables: {
       startDate,
     },
@@ -30,15 +29,7 @@ const CalendarPage: NextPage = () => {
       <Heading as="h2" size="lg">
         Dein Kalender
       </Heading>
-      {/* <Box mt={4}>
-        <Stack>
-          <EventCategoryDropdown onChange={setCategoryFilterId} />
-        </Stack>
-      </Box> */}
-      <UpcomingEventsList events={events} />
-      {/* {!loading && !events.length && (
-        <Text>Leider keine nächsten Veranstaltungen</Text>
-      )} */}
+      <EventsList events={events} isEmpty={!loading && !events.length} />
     </>
   );
 };

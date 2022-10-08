@@ -71,11 +71,37 @@ export const createApolloClient = (jwt?: string) => {
       // },
     }),
     cache: new InMemoryCache({
-      typePolicies: createApolloCacheTypePolicies([
-        'Event',
-        'EventCategory',
-        'Venue',
-      ]),
+      typePolicies: {
+        Query: {
+          fields: {
+            events: {
+              keyArgs: ['filters', 'sort'],
+              read(existing, { args: { offset, limit } }) {
+                return existing;
+              },
+              // eslint-disable-next-line default-param-last
+              merge(existing, incoming, args) {
+                return {
+                  ...incoming,
+                  data: [
+                    ...(existing?.data || []),
+                    ...(incoming?.data.filter(
+                      (incomingValue: { __ref: string }) =>
+                        !existing ||
+                        !(existing.data || []).find(
+                          (existingValue: { __ref: string }) =>
+                            // eslint-disable-next-line no-underscore-dangle
+                            existingValue.__ref === incomingValue.__ref
+                        )
+                    ) || []),
+                  ],
+                };
+              },
+            },
+          },
+        },
+        ...createApolloCacheTypePolicies(['Event', 'EventCategory', 'Venue']),
+      },
     }),
   });
 };

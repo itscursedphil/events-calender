@@ -5,9 +5,7 @@ import dayjs from 'dayjs';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import Head from 'next/head';
 
-import UpcomingEventsList, {
-  UpcomingEvent,
-} from '../../components/Event/UpcomingEventsList';
+import EventsList, { UpcomingEvent } from '../../components/Event/EventsList';
 import {
   UpcomingEventsDocument,
   UpcomingEventsQuery,
@@ -54,7 +52,7 @@ const VenuePage: NextPage<VenuePageProps> = ({
       <Heading as="h4" size="md" mt={8}>
         Nächste Veranstaltungen:
       </Heading>
-      {events.length && <UpcomingEventsList events={events} />}
+      <EventsList events={events} isEmpty={!events.length} />
     </>
   );
 };
