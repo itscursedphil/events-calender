@@ -5,7 +5,6 @@ import { GetStaticProps, NextPage } from 'next';
 import Head from 'next/head';
 
 import { EventsList } from '../../components/Event';
-import { useEventsList } from '../../components/Event/EventsList';
 import {
   EventCategoriesDocument,
   EventCategoriesQuery,
@@ -13,6 +12,7 @@ import {
   UpcomingEventsQuery,
   UpcomingEventsQueryVariables,
 } from '../../generated/graphql';
+import useEventsList from '../../hooks/useEventsList';
 import { addApolloState, createApolloClient } from '../../lib/apolloClient';
 
 const FETCH_EVENTS_LIMIT = 20;

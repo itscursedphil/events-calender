@@ -5,10 +5,7 @@ import dayjs from 'dayjs';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import Head from 'next/head';
 
-import EventsList, {
-  EventsListEvent,
-  useEventsList,
-} from '../../components/Event/EventsList';
+import { EventsList } from '../../components/Event';
 import {
   UpcomingEventsDocument,
   UpcomingEventsQuery,
@@ -20,6 +17,7 @@ import {
   VenueQuery,
   VenueQueryVariables,
 } from '../../generated/graphql';
+import useEventsList, { EventsListEvent } from '../../hooks/useEventsList';
 import { addApolloState, createApolloClient } from '../../lib/apolloClient';
 import { mapEventQueryResult } from '../../lib/event';
 import { createSlugFromString, getIdFromSlug } from '../../lib/slug';

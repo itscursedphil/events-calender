@@ -4,8 +4,9 @@ import dayjs from 'dayjs';
 import { NextPage } from 'next';
 import Head from 'next/head';
 
-import EventsList, { EventsListEvent } from '../../components/Event/EventsList';
+import EventsList from '../../components/Event/EventsList';
 import { useCurrentUserCalendarQuery } from '../../generated/graphql';
+import { EventsListEvent } from '../../hooks/useEventsList';
 import { mapEventQueryResult } from '../../lib/event';
 
 const FETCH_EVENTS_LIMIT = 20;

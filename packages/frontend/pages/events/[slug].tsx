@@ -30,7 +30,6 @@ import {
   useEventAttendeesCountLazyQuery,
   useEventAttendeesCountQuery,
   useEventAttendingStatusLazyQuery,
-  useEventLazyQuery,
   useEventQuery,
   useUpdateEventAttendingMutation,
 } from '../../generated/graphql';
