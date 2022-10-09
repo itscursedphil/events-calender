@@ -1169,7 +1169,7 @@ export type CreateEventMutationVariables = Exact<{
 }>;
 
 
-export type CreateEventMutation = { __typename?: 'Mutation', createEvent?: { __typename?: 'EventEntityResponse', data?: { __typename?: 'EventEntity', id?: string | null, attributes?: { __typename?: 'Event', title: string, description: string, startDate: any, endDate?: any | null, doorsTime?: any | null, category?: { __typename?: 'EventCategoryEntityResponse', data?: { __typename?: 'EventCategoryEntity', id?: string | null, attributes?: { __typename?: 'EventCategory', name: string, slug: string } | null } | null } | null, venue?: { __typename?: 'VenueEntityResponse', data?: { __typename?: 'VenueEntity', id?: string | null, attributes?: { __typename?: 'Venue', name: string, description?: string | null, website?: string | null, address: { __typename?: 'ComponentLocationAddress', street: string, streetNumber: string, postcode: number } } | null } | null } | null } | null } | null } | null };
+export type CreateEventMutation = { __typename?: 'Mutation', createEvent?: { __typename?: 'EventEntityResponse', data?: { __typename?: 'EventEntity', id?: string | null, attributes?: { __typename?: 'Event', title: string, description: string, startDate: any, endDate?: any | null, doorsTime?: any | null, attending?: boolean | null, category?: { __typename?: 'EventCategoryEntityResponse', data?: { __typename?: 'EventCategoryEntity', id?: string | null, attributes?: { __typename?: 'EventCategory', name: string, slug: string } | null } | null } | null, venue?: { __typename?: 'VenueEntityResponse', data?: { __typename?: 'VenueEntity', id?: string | null, attributes?: { __typename?: 'Venue', name: string, description?: string | null, website?: string | null, address: { __typename?: 'ComponentLocationAddress', street: string, streetNumber: string, postcode: number } } | null } | null } | null } | null } | null } | null };
 
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1192,7 +1192,14 @@ export type EventQueryVariables = Exact<{
 }>;
 
 
-export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'EventEntityResponse', data?: { __typename?: 'EventEntity', id?: string | null, attributes?: { __typename?: 'Event', title: string, description: string, startDate: any, endDate?: any | null, doorsTime?: any | null, attendeesCount?: number | null, venue?: { __typename?: 'VenueEntityResponse', data?: { __typename?: 'VenueEntity', id?: string | null, attributes?: { __typename?: 'Venue', name: string, description?: string | null, address: { __typename?: 'ComponentLocationAddress', id: string, street: string, streetNumber: string, postcode: number } } | null } | null } | null, category?: { __typename?: 'EventCategoryEntityResponse', data?: { __typename?: 'EventCategoryEntity', id?: string | null, attributes?: { __typename?: 'EventCategory', name: string, slug: string } | null } | null } | null } | null } | null } | null };
+export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'EventEntityResponse', data?: { __typename?: 'EventEntity', id?: string | null, attributes?: { __typename?: 'Event', title: string, description: string, startDate: any, endDate?: any | null, doorsTime?: any | null, venue?: { __typename?: 'VenueEntityResponse', data?: { __typename?: 'VenueEntity', id?: string | null, attributes?: { __typename?: 'Venue', name: string, description?: string | null, address: { __typename?: 'ComponentLocationAddress', id: string, street: string, streetNumber: string, postcode: number } } | null } | null } | null, category?: { __typename?: 'EventCategoryEntityResponse', data?: { __typename?: 'EventCategoryEntity', id?: string | null, attributes?: { __typename?: 'EventCategory', name: string, slug: string } | null } | null } | null } | null } | null } | null };
+
+export type EventAttendeesCountQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type EventAttendeesCountQuery = { __typename?: 'Query', event?: { __typename?: 'EventEntityResponse', data?: { __typename?: 'EventEntity', id?: string | null, attributes?: { __typename?: 'Event', attendeesCount?: number | null } | null } | null } | null };
 
 export type EventAttendingStatusQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -1214,6 +1221,17 @@ export type EventPathsQueryVariables = Exact<{
 
 
 export type EventPathsQuery = { __typename?: 'Query', events?: { __typename?: 'EventEntityResponseCollection', data: Array<{ __typename?: 'EventEntity', id?: string | null, attributes?: { __typename?: 'Event', title: string } | null }>, meta: { __typename?: 'ResponseCollectionMeta', pagination: { __typename?: 'Pagination', total: number, page: number, pageSize: number, pageCount: number } } } | null };
+
+export type EventsAttendeesCountsQueryVariables = Exact<{
+  from?: InputMaybe<Scalars['Int']>;
+  limit?: InputMaybe<Scalars['Int']>;
+  startDate: Scalars['DateTime'];
+  categories?: InputMaybe<Array<InputMaybe<Scalars['ID']>> | InputMaybe<Scalars['ID']>>;
+  venues?: InputMaybe<Array<InputMaybe<Scalars['ID']>> | InputMaybe<Scalars['ID']>>;
+}>;
+
+
+export type EventsAttendeesCountsQuery = { __typename?: 'Query', events?: { __typename?: 'EventEntityResponseCollection', data: Array<{ __typename?: 'EventEntity', id?: string | null, attributes?: { __typename?: 'Event', attendeesCount?: number | null } | null }>, meta: { __typename?: 'ResponseCollectionMeta', pagination: { __typename?: 'Pagination', total: number, page: number, pageSize: number, pageCount: number } } } | null };
 
 export type LoginMutationVariables = Exact<{
   email: Scalars['String'];
@@ -1248,7 +1266,7 @@ export type UpcomingEventsQueryVariables = Exact<{
 }>;
 
 
-export type UpcomingEventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventEntityResponseCollection', data: Array<{ __typename?: 'EventEntity', id?: string | null, attributes?: { __typename?: 'Event', title: string, description: string, startDate: any, endDate?: any | null, doorsTime?: any | null, attendeesCount?: number | null, venue?: { __typename?: 'VenueEntityResponse', data?: { __typename?: 'VenueEntity', id?: string | null, attributes?: { __typename?: 'Venue', name: string } | null } | null } | null, category?: { __typename?: 'EventCategoryEntityResponse', data?: { __typename?: 'EventCategoryEntity', id?: string | null, attributes?: { __typename?: 'EventCategory', name: string, slug: string } | null } | null } | null } | null }>, meta: { __typename?: 'ResponseCollectionMeta', pagination: { __typename?: 'Pagination', total: number, page: number, pageSize: number, pageCount: number } } } | null };
+export type UpcomingEventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventEntityResponseCollection', data: Array<{ __typename?: 'EventEntity', id?: string | null, attributes?: { __typename?: 'Event', title: string, description: string, startDate: any, endDate?: any | null, doorsTime?: any | null, venue?: { __typename?: 'VenueEntityResponse', data?: { __typename?: 'VenueEntity', id?: string | null, attributes?: { __typename?: 'Venue', name: string } | null } | null } | null, category?: { __typename?: 'EventCategoryEntityResponse', data?: { __typename?: 'EventCategoryEntity', id?: string | null, attributes?: { __typename?: 'EventCategory', name: string, slug: string } | null } | null } | null } | null }>, meta: { __typename?: 'ResponseCollectionMeta', pagination: { __typename?: 'Pagination', total: number, page: number, pageSize: number, pageCount: number } } } | null };
 
 export type UpdateEventAttendingMutationVariables = Exact<{
   eventId: Scalars['ID'];
@@ -1296,6 +1314,7 @@ export const CreateEventDocument = gql`
         startDate
         endDate
         doorsTime
+        attending
         category {
           data {
             id
@@ -1484,7 +1503,6 @@ export const EventDocument = gql`
         startDate
         endDate
         doorsTime
-        attendeesCount
         venue {
           data {
             id
@@ -1542,6 +1560,46 @@ export function useEventLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Even
 export type EventQueryHookResult = ReturnType<typeof useEventQuery>;
 export type EventLazyQueryHookResult = ReturnType<typeof useEventLazyQuery>;
 export type EventQueryResult = Apollo.QueryResult<EventQuery, EventQueryVariables>;
+export const EventAttendeesCountDocument = gql`
+    query EventAttendeesCount($id: ID!) {
+  event(id: $id) {
+    data {
+      id
+      attributes {
+        attendeesCount
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useEventAttendeesCountQuery__
+ *
+ * To run a query within a React component, call `useEventAttendeesCountQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEventAttendeesCountQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEventAttendeesCountQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useEventAttendeesCountQuery(baseOptions: Apollo.QueryHookOptions<EventAttendeesCountQuery, EventAttendeesCountQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<EventAttendeesCountQuery, EventAttendeesCountQueryVariables>(EventAttendeesCountDocument, options);
+      }
+export function useEventAttendeesCountLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EventAttendeesCountQuery, EventAttendeesCountQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<EventAttendeesCountQuery, EventAttendeesCountQueryVariables>(EventAttendeesCountDocument, options);
+        }
+export type EventAttendeesCountQueryHookResult = ReturnType<typeof useEventAttendeesCountQuery>;
+export type EventAttendeesCountLazyQueryHookResult = ReturnType<typeof useEventAttendeesCountLazyQuery>;
+export type EventAttendeesCountQueryResult = Apollo.QueryResult<EventAttendeesCountQuery, EventAttendeesCountQueryVariables>;
 export const EventAttendingStatusDocument = gql`
     query EventAttendingStatus($id: ID!) {
   event(id: $id) {
@@ -1676,6 +1734,62 @@ export function useEventPathsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type EventPathsQueryHookResult = ReturnType<typeof useEventPathsQuery>;
 export type EventPathsLazyQueryHookResult = ReturnType<typeof useEventPathsLazyQuery>;
 export type EventPathsQueryResult = Apollo.QueryResult<EventPathsQuery, EventPathsQueryVariables>;
+export const EventsAttendeesCountsDocument = gql`
+    query EventsAttendeesCounts($from: Int = 0, $limit: Int = 10, $startDate: DateTime!, $categories: [ID], $venues: [ID]) {
+  events(
+    filters: {startDate: {gte: $startDate}, category: {id: {in: $categories}}, venue: {id: {in: $venues}}}
+    pagination: {start: $from, limit: $limit}
+    sort: "startDate:asc"
+  ) {
+    data {
+      id
+      attributes {
+        attendeesCount
+      }
+    }
+    meta {
+      pagination {
+        total
+        page
+        pageSize
+        pageCount
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useEventsAttendeesCountsQuery__
+ *
+ * To run a query within a React component, call `useEventsAttendeesCountsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEventsAttendeesCountsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEventsAttendeesCountsQuery({
+ *   variables: {
+ *      from: // value for 'from'
+ *      limit: // value for 'limit'
+ *      startDate: // value for 'startDate'
+ *      categories: // value for 'categories'
+ *      venues: // value for 'venues'
+ *   },
+ * });
+ */
+export function useEventsAttendeesCountsQuery(baseOptions: Apollo.QueryHookOptions<EventsAttendeesCountsQuery, EventsAttendeesCountsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<EventsAttendeesCountsQuery, EventsAttendeesCountsQueryVariables>(EventsAttendeesCountsDocument, options);
+      }
+export function useEventsAttendeesCountsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EventsAttendeesCountsQuery, EventsAttendeesCountsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<EventsAttendeesCountsQuery, EventsAttendeesCountsQueryVariables>(EventsAttendeesCountsDocument, options);
+        }
+export type EventsAttendeesCountsQueryHookResult = ReturnType<typeof useEventsAttendeesCountsQuery>;
+export type EventsAttendeesCountsLazyQueryHookResult = ReturnType<typeof useEventsAttendeesCountsLazyQuery>;
+export type EventsAttendeesCountsQueryResult = Apollo.QueryResult<EventsAttendeesCountsQuery, EventsAttendeesCountsQueryVariables>;
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(input: {identifier: $email, password: $password}) {
@@ -1810,7 +1924,6 @@ export const UpcomingEventsDocument = gql`
         startDate
         endDate
         doorsTime
-        attendeesCount
         venue {
           data {
             id

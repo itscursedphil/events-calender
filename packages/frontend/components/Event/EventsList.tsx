@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   Badge,
   Box,
@@ -15,8 +21,10 @@ import dayjs from 'dayjs';
 import NextLink from 'next/link';
 
 import {
+  EventsAttendeesCountsQuery,
   UpcomingEventsQuery,
   useEventCategoriesQuery,
+  useEventsAttendeesCountsQuery,
   useUpcomingEventsQuery,
 } from '../../generated/graphql';
 import { Event, EventCategory, mapEventQueryResult } from '../../lib/event';
@@ -44,10 +52,24 @@ export interface EventsListEvent
 
 // TODO: Fetch event attendees count client side
 
-const mapEventsQueryResults = (data?: UpcomingEventsQuery) =>
-  (data?.events?.data || []).map((event) =>
-    mapEventQueryResult<typeof event, EventsListEvent>(event)
-  );
+const mapEventsQueryResults = (
+  data?: UpcomingEventsQuery,
+  attendeesCountsData?: EventsAttendeesCountsQuery
+) =>
+  (data?.events?.data || []).map((eventResult) => {
+    const event = mapEventQueryResult<typeof eventResult, EventsListEvent>(
+      eventResult
+    );
+
+    const eventAtteendeesCount = (attendeesCountsData?.events?.data || []).find(
+      (eventAttendeesCountResult) => eventAttendeesCountResult.id === event.id
+    );
+
+    return {
+      ...event,
+      attendeesCount: eventAtteendeesCount?.attributes?.attendeesCount || 0,
+    };
+  });
 
 export const useEventsList = ({
   categories,
@@ -61,6 +83,7 @@ export const useEventsList = ({
   events: EventsListEvent[];
   total: number;
   isLoading: boolean;
+  attendeesCountsIsLoading: boolean;
   hasMore: boolean;
   handleFetchMore: () => Promise<void>;
 } => {
@@ -80,18 +103,45 @@ export const useEventsList = ({
     },
     fetchPolicy: 'cache-and-network',
   });
+  const {
+    data: attendeesCountsData,
+    fetchMore: fetchMoreAttendeesCounts,
+    loading: attendeesCountsIsLoading,
+  } = useEventsAttendeesCountsQuery({
+    variables: {
+      from: 0,
+      limit,
+      startDate: dayjs().startOf('day').toISOString(),
+      categories,
+      venues,
+    },
+    fetchPolicy: 'cache-and-network',
+  });
 
   const { total = 0 } = data?.events?.meta.pagination || {};
   const hasMore = nextOffset < total;
 
   const handleFetchMore = useCallback(async () => {
     if (hasMore && !isLoading) {
-      await fetchMore({ variables: { from: nextOffset } });
+      await Promise.all([
+        fetchMore({ variables: { from: nextOffset } }),
+        fetchMoreAttendeesCounts({ variables: { from: nextOffset } }),
+      ]);
       setNextOffset(nextOffset + limit);
     }
-  }, [fetchMore, hasMore, limit, isLoading, nextOffset]);
+  }, [
+    hasMore,
+    isLoading,
+    fetchMore,
+    nextOffset,
+    fetchMoreAttendeesCounts,
+    limit,
+  ]);
 
-  const events = mapEventsQueryResults(data || previousData);
+  const events = useMemo(
+    () => mapEventsQueryResults(data || previousData, attendeesCountsData),
+    [attendeesCountsData, data, previousData]
+  );
 
   const categoriesId = JSON.stringify(categories);
   const venuesId = JSON.stringify(venues);
@@ -100,7 +150,14 @@ export const useEventsList = ({
     setNextOffset(limit);
   }, [categoriesId, venuesId, limit]);
 
-  return { events, isLoading, total, hasMore, handleFetchMore };
+  return {
+    events,
+    isLoading,
+    attendeesCountsIsLoading,
+    total,
+    hasMore,
+    handleFetchMore,
+  };
 };
 
 const EventCategoryDropdown: React.FC<{
@@ -142,21 +199,33 @@ const EventsListItemHeader: React.FC<
 );
 
 const EventsListItemMeta: React.FC<
-  Pick<EventsListEvent, 'startDate' | 'venue' | 'attendeesCount'>
-> = ({ startDate, venue, attendeesCount }) => (
+  Pick<EventsListEvent, 'startDate' | 'venue' | 'attendeesCount'> & {
+    attendeesCountIsLoading?: boolean;
+  }
+> = ({ startDate, venue, attendeesCount, attendeesCountIsLoading }) => (
   <Box display="flex" justifyContent="space-between">
     <Stack direction="row" spacing={4}>
       <EventStartDateWithIcon startDate={startDate} />
       <VenueLinkWithIcon {...venue} />
     </Stack>
-    <EventAttendeesCountWithIcon count={attendeesCount} />
+    <EventAttendeesCountWithIcon
+      count={attendeesCount}
+      isLoading={attendeesCountIsLoading}
+    />
   </Box>
 );
 
-const EventsListItem: React.FC<EventsListEvent> = (event) => (
+const EventsListItem: React.FC<
+  EventsListEvent & {
+    attendeesCountIsLoading?: boolean;
+  }
+> = ({ attendeesCountIsLoading, ...event }) => (
   <LinkBox>
     <EventsListItemHeader {...event} />
-    <EventsListItemMeta {...event} />
+    <EventsListItemMeta
+      {...event}
+      attendeesCountIsLoading={attendeesCountIsLoading}
+    />
   </LinkBox>
 );
 
@@ -164,12 +233,14 @@ const EventsListItem: React.FC<EventsListEvent> = (event) => (
 const EventsList: React.FC<{
   events: EventsListEvent[];
   isEmpty?: boolean;
+  attendeesCountsIsLoading?: boolean;
   showSkeleton?: boolean;
   onCategoryChange?: (id: string) => void;
   onSkeletonIntersecting?: () => void;
 }> = ({
   events,
   isEmpty,
+  attendeesCountsIsLoading,
   showSkeleton,
   onCategoryChange,
   onSkeletonIntersecting,
@@ -218,7 +289,11 @@ const EventsList: React.FC<{
             <Divider my={4} />
             <Stack divider={<Divider />} spacing={4}>
               {eventsForDay.map((event) => (
-                <EventsListItem {...event} key={event.id} />
+                <EventsListItem
+                  {...event}
+                  attendeesCountIsLoading={attendeesCountsIsLoading}
+                  key={event.id}
+                />
               ))}
             </Stack>
           </Box>

@@ -1,0 +1,10 @@
+query EventAttendeesCount($id: ID!) {
+  event(id: $id) {
+    data {
+      id
+      attributes {
+        attendeesCount
+      }
+    }
+  }
+}

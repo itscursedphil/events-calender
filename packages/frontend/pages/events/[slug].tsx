@@ -27,6 +27,8 @@ import {
   EventPathsQueryVariables,
   EventQuery,
   EventQueryVariables,
+  useEventAttendeesCountLazyQuery,
+  useEventAttendeesCountQuery,
   useEventAttendingStatusLazyQuery,
   useEventLazyQuery,
   useEventQuery,
@@ -55,7 +57,7 @@ const AttendEventSelect: React.FC<{ id: Event['id'] }> = ({ id }) => {
   ] = useEventAttendingStatusLazyQuery({ variables: { id } });
   const router = useRouter();
   const [updateEventAttendingMutation] = useUpdateEventAttendingMutation();
-  const [eventQuery] = useEventLazyQuery({
+  const [eventAttendeesCountQuery] = useEventAttendeesCountLazyQuery({
     variables: { id },
     fetchPolicy: 'network-only',
   });
@@ -80,9 +82,9 @@ const AttendEventSelect: React.FC<{ id: Event['id'] }> = ({ id }) => {
       optimisticResponse: { updateEventAttending: nextAttending },
     });
     refetchEventAttendingStatus();
-    eventQuery();
+    eventAttendeesCountQuery();
   }, [
-    eventQuery,
+    eventAttendeesCountQuery,
     id,
     isAttending,
     refetchEventAttendingStatus,
@@ -120,15 +122,25 @@ const AttendEventSelect: React.FC<{ id: Event['id'] }> = ({ id }) => {
 };
 
 const EventPage: NextPage<Event> = ({ id }) => {
-  const { data } = useEventQuery({ variables: { id } });
+  const { data } = useEventQuery({
+    variables: { id },
+    fetchPolicy: 'cache-and-network',
+  });
+  const { data: attendeesCountData, loading: attendeesCountIsLoading } =
+    useEventAttendeesCountQuery({
+      variables: { id },
+      fetchPolicy: 'cache-and-network',
+    });
 
   const eventData = data?.event?.data;
 
   // TODO: Fix
   if (!eventData) return null;
 
-  const { title, category, startDate, venue, attendeesCount, description } =
+  const { title, category, startDate, venue, description } =
     mapEventQueryResult<typeof eventData, Event>(eventData);
+  const attendeesCount =
+    attendeesCountData?.event?.data?.attributes?.attendeesCount || 0;
 
   return (
     <>
@@ -145,7 +157,18 @@ const EventPage: NextPage<Event> = ({ id }) => {
         <Stack spacing={2}>
           <EventStartDateWithIcon startDate={startDate} />
           <VenueLinkWithIcon {...venue} />
-          <EventAttendeesCountWithIcon count={attendeesCount} compact={false} />
+          <Box
+            display="inline"
+            width={attendeesCountIsLoading ? '60%' : 'auto'}
+            height="1rem"
+          >
+            <EventAttendeesCountWithIcon
+              count={attendeesCount}
+              isLoading={attendeesCountIsLoading}
+              compact={false}
+              showAlways
+            />
+          </Box>
         </Stack>
       </Box>
       <Box my={4} display="flex">

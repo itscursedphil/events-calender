@@ -8,7 +8,6 @@ query Event($id: ID!) {
         startDate
         endDate
         doorsTime
-        attendeesCount
         venue {
           data {
             id
