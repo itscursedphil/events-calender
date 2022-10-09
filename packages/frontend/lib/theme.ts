@@ -15,6 +15,17 @@ const customTheme: ThemeOverride = {
       900: '#0d0d0d',
     },
   },
+  radii: {
+    none: '0',
+    sm: '0',
+    base: '0',
+    md: '0',
+    lg: '0',
+    xl: '0.75rem',
+    '2xl': '1rem',
+    '3xl': '1.5rem',
+    full: '9999px',
+  },
   styles: {
     global: {
       body: {

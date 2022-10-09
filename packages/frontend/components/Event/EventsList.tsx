@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 import {
-  Badge,
   Box,
   Divider,
   Heading,
@@ -20,6 +19,7 @@ import { createSlugFromString } from '../../lib/slug';
 import { sortEventsByDay } from '../../lib/sort';
 import { VenueLinkWithIcon } from '../Venue';
 import EventAttendeesCountWithIcon from './EventAttendeesCountWithIcon';
+import EventCategoryBadge from './EventCategoryBadge';
 import EventStartDateWithIcon from './EventStartDateWithIcon';
 
 const EventCategoryDropdown: React.FC<{
@@ -61,7 +61,9 @@ const EventsListItemHeader: React.FC<
         <LinkOverlay>{title}</LinkOverlay>
       </NextLink>
     </Heading>
-    <Badge mt={1}>{category.name}</Badge>
+    <Box display="inline-flex" mt={1}>
+      <EventCategoryBadge {...category} />
+    </Box>
   </Box>
 );
 

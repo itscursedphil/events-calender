@@ -35,4 +35,14 @@ export default {
     // Disable possibility to update uid
     event.params.data = data;
   },
+  beforeFindOne: async (event) => {
+    const { id, ...where } = event.params.where;
+
+    if (id.length === 16) {
+      event.params.where = {
+        ...where,
+        uid: id,
+      };
+    }
+  },
 };

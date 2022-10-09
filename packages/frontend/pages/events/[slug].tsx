@@ -17,6 +17,7 @@ import { useRouter } from 'next/router';
 
 import {
   EventAttendeesCountWithIcon,
+  EventCategoryBadge,
   EventStartDateWithIcon,
 } from '../../components/Event';
 import { VenueLinkWithIcon } from '../../components/Venue';
@@ -147,7 +148,7 @@ const EventPage: NextPage<Event> = ({ id }) => {
         <title>{title}</title>
       </Head>
       <Box mb={2}>
-        <Badge>{category.name}</Badge>
+        <EventCategoryBadge {...category} />
       </Box>
       <Heading as="h2" size="lg">
         {title}

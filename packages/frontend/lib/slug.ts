@@ -12,8 +12,8 @@ export const createSlugFromString = (str: string, id: string) => {
 export const getIdFromSlug = (slug: string) => {
   const id = slug.split('-').pop();
 
-  if (!id || !parseInt(id, 10))
-    throw new Error('Id could not be parsed from slug');
+  // if (!id || !parseInt(id, 10))
+  if (!id) throw new Error('Id could not be parsed from slug');
 
   return id;
 };
