@@ -63,12 +63,6 @@
       "inversedBy": "users",
       "configurable": false
     },
-    "venues": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::venue.venue",
-      "mappedBy": "owners"
-    },
     "events": {
       "type": "relation",
       "relation": "manyToMany",
@@ -88,6 +82,21 @@
     },
     "lastName": {
       "type": "string"
+    },
+    "createdEvents": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::event.event",
+      "mappedBy": "creator"
+    },
+    "createdVenues": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::venue.venue",
+      "mappedBy": "creator"
+    },
+    "uid": {
+      "type": "uid"
     }
   }
 }

@@ -50,13 +50,18 @@ const EventCategoryDropdown: React.FC<{
 const EventsListItemHeader: React.FC<
   Pick<EventsListEvent, 'title' | 'category' | 'id'>
 > = ({ id, title, category }) => (
-  <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-    <Heading as="h3" size="md">
+  <Box
+    display="flex"
+    justifyContent="space-between"
+    alignItems="flex-start"
+    mb={4}
+  >
+    <Heading as="h3" size="md" mr={2}>
       <NextLink href={`/events/${createSlugFromString(title, id)}`} passHref>
         <LinkOverlay>{title}</LinkOverlay>
       </NextLink>
     </Heading>
-    <Badge>{category.name}</Badge>
+    <Badge mt={1}>{category.name}</Badge>
   </Box>
 );
 

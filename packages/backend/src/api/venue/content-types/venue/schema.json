@@ -29,17 +29,21 @@
       "component": "location.address",
       "required": true
     },
-    "owners": {
+    "creator": {
       "type": "relation",
-      "relation": "manyToMany",
+      "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
-      "inversedBy": "venues"
+      "private": true,
+      "inversedBy": "createdVenues"
     },
     "events": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::event.event",
       "mappedBy": "venue"
+    },
+    "uid": {
+      "type": "uid"
     }
   }
 }
