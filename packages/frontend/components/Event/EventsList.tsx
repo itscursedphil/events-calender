@@ -42,6 +42,8 @@ export interface UpcomingEvent
   venue: Pick<Venue, 'id' | 'name'>;
 }
 
+// TODO: Fetch event attendees count client side
+
 const mapUpcomingEventsQueryResults = (data?: UpcomingEventsQuery) =>
   (data?.events?.data || []).map((event) =>
     mapEventQueryResult<typeof event, UpcomingEvent>(event)
@@ -49,9 +51,11 @@ const mapUpcomingEventsQueryResults = (data?: UpcomingEventsQuery) =>
 
 export const useEventsList = ({
   categories,
+  venues,
   limit = 20,
 }: {
   categories?: string[];
+  venues?: string[];
   limit?: number;
 }): {
   events: UpcomingEvent[];
@@ -72,10 +76,12 @@ export const useEventsList = ({
       limit,
       startDate: dayjs().startOf('day').toISOString(),
       categories,
+      venues,
     },
+    fetchPolicy: 'cache-and-network',
   });
 
-  const total = data?.events?.meta.pagination.total || 0;
+  const { total = 0 } = data?.events?.meta.pagination || {};
   const hasMore = nextOffset < total;
 
   const handleFetchMore = useCallback(async () => {
@@ -88,10 +94,11 @@ export const useEventsList = ({
   const events = mapUpcomingEventsQueryResults(data || previousData);
 
   const categoriesId = JSON.stringify(categories);
+  const venuesId = JSON.stringify(venues);
 
   useEffect(() => {
     setNextOffset(limit);
-  }, [categoriesId, limit]);
+  }, [categoriesId, venuesId, limit]);
 
   return { events, isLoading, total, hasMore, handleFetchMore };
 };
@@ -153,6 +160,7 @@ const EventsListItem: React.FC<UpcomingEvent> = (event) => (
   </LinkBox>
 );
 
+// TODO: Load event attendees count client side instead of server side
 const EventsList: React.FC<{
   events: UpcomingEvent[];
   isEmpty?: boolean;
@@ -227,8 +235,8 @@ const EventsList: React.FC<{
             </Stack>
           )}
         </div>
-        {isEmpty && <Text>Leider keine Ergebnisse</Text>}
       </Stack>
+      {isEmpty && <Text>Leider keine Ergebnisse</Text>}
     </Box>
   );
 };

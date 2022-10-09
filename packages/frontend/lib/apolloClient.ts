@@ -76,7 +76,7 @@ export const createApolloClient = (jwt?: string) => {
           fields: {
             events: {
               keyArgs: ['filters', 'sort'],
-              read(existing, { args: { offset, limit } }) {
+              read(existing, { args }) {
                 return existing;
               },
               // eslint-disable-next-line default-param-last

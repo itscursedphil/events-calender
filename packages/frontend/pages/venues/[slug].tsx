@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FiMapPin } from 'react-icons/fi';
 import { Box, Heading, Icon, Stack, Text } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import Head from 'next/head';
 
-import EventsList, { UpcomingEvent } from '../../components/Event/EventsList';
+import EventsList, {
+  UpcomingEvent,
+  useEventsList,
+} from '../../components/Event/EventsList';
 import {
   UpcomingEventsDocument,
   UpcomingEventsQuery,
@@ -24,12 +27,21 @@ import { mapVenueQueryResult, Venue } from '../../lib/venue';
 
 type VenuePageProps = Venue & { events: UpcomingEvent[] };
 
+const FETCH_EVENTS_LIMIT = 20;
+
 const VenuePage: NextPage<VenuePageProps> = ({
+  id,
   name,
   description,
   address,
-  events,
 }) => {
+  const [categoryFilterId, setCategoryFilterId] = useState<string | null>(null);
+  const { events, isLoading, hasMore, handleFetchMore } = useEventsList({
+    categories: categoryFilterId ? [categoryFilterId] : undefined,
+    venues: [id],
+    limit: FETCH_EVENTS_LIMIT,
+  });
+
   return (
     <>
       <Head>
@@ -52,7 +64,17 @@ const VenuePage: NextPage<VenuePageProps> = ({
       <Heading as="h4" size="md" mt={8}>
         Nächste Veranstaltungen:
       </Heading>
-      <EventsList events={events} isEmpty={!events.length} />
+      <Box mt={4}>
+        <EventsList
+          events={events}
+          isEmpty={!isLoading && !events.length}
+          showSkeleton={hasMore}
+          onCategoryChange={(categoryId) => {
+            setCategoryFilterId(categoryId);
+          }}
+          onSkeletonIntersecting={handleFetchMore}
+        />
+      </Box>
     </>
   );
 };
@@ -120,6 +142,7 @@ export const getStaticProps: GetStaticProps<
         variables: {
           startDate: dayjs().startOf('day').toISOString(),
           venues: [id],
+          limit: FETCH_EVENTS_LIMIT,
         },
       });
 
