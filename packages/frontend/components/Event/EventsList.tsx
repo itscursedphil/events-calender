@@ -27,7 +27,7 @@ import { VenueLinkWithIcon } from '../Venue';
 import EventAttendeesCountWithIcon from './EventAttendeesCountWithIcon';
 import EventStartDateWithIcon from './EventStartDateWithIcon';
 
-export interface UpcomingEvent
+export interface EventsListEvent
   extends Pick<
     Event,
     | 'id'
@@ -44,9 +44,9 @@ export interface UpcomingEvent
 
 // TODO: Fetch event attendees count client side
 
-const mapUpcomingEventsQueryResults = (data?: UpcomingEventsQuery) =>
+const mapEventsQueryResults = (data?: UpcomingEventsQuery) =>
   (data?.events?.data || []).map((event) =>
-    mapEventQueryResult<typeof event, UpcomingEvent>(event)
+    mapEventQueryResult<typeof event, EventsListEvent>(event)
   );
 
 export const useEventsList = ({
@@ -58,7 +58,7 @@ export const useEventsList = ({
   venues?: string[];
   limit?: number;
 }): {
-  events: UpcomingEvent[];
+  events: EventsListEvent[];
   total: number;
   isLoading: boolean;
   hasMore: boolean;
@@ -91,7 +91,7 @@ export const useEventsList = ({
     }
   }, [fetchMore, hasMore, limit, isLoading, nextOffset]);
 
-  const events = mapUpcomingEventsQueryResults(data || previousData);
+  const events = mapEventsQueryResults(data || previousData);
 
   const categoriesId = JSON.stringify(categories);
   const venuesId = JSON.stringify(venues);
@@ -129,7 +129,7 @@ const EventCategoryDropdown: React.FC<{
 };
 
 const EventsListItemHeader: React.FC<
-  Pick<UpcomingEvent, 'title' | 'category' | 'id'>
+  Pick<EventsListEvent, 'title' | 'category' | 'id'>
 > = ({ id, title, category }) => (
   <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
     <Heading as="h3" size="md">
@@ -142,7 +142,7 @@ const EventsListItemHeader: React.FC<
 );
 
 const EventsListItemMeta: React.FC<
-  Pick<UpcomingEvent, 'startDate' | 'venue' | 'attendeesCount'>
+  Pick<EventsListEvent, 'startDate' | 'venue' | 'attendeesCount'>
 > = ({ startDate, venue, attendeesCount }) => (
   <Box display="flex" justifyContent="space-between">
     <Stack direction="row" spacing={4}>
@@ -153,7 +153,7 @@ const EventsListItemMeta: React.FC<
   </Box>
 );
 
-const EventsListItem: React.FC<UpcomingEvent> = (event) => (
+const EventsListItem: React.FC<EventsListEvent> = (event) => (
   <LinkBox>
     <EventsListItemHeader {...event} />
     <EventsListItemMeta {...event} />
@@ -162,7 +162,7 @@ const EventsListItem: React.FC<UpcomingEvent> = (event) => (
 
 // TODO: Load event attendees count client side instead of server side
 const EventsList: React.FC<{
-  events: UpcomingEvent[];
+  events: EventsListEvent[];
   isEmpty?: boolean;
   showSkeleton?: boolean;
   onCategoryChange?: (id: string) => void;

@@ -59,7 +59,7 @@ export const getStaticProps: GetStaticProps = async () => {
         query: EventCategoriesDocument,
       });
 
-    const fetchUpcomingEvents = () => {
+    const fetchEvents = () => {
       const startDate = dayjs().startOf('day').toISOString();
 
       return apolloClient.query<
@@ -75,7 +75,7 @@ export const getStaticProps: GetStaticProps = async () => {
       });
     };
 
-    await Promise.all([fetchUpcomingEvents(), fetchEventCategories()]);
+    await Promise.all([fetchEvents(), fetchEventCategories()]);
 
     return {
       ...addApolloState(apolloClient, {

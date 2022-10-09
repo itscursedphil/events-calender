@@ -6,7 +6,7 @@ import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import Head from 'next/head';
 
 import EventsList, {
-  UpcomingEvent,
+  EventsListEvent,
   useEventsList,
 } from '../../components/Event/EventsList';
 import {
@@ -25,7 +25,7 @@ import { mapEventQueryResult } from '../../lib/event';
 import { createSlugFromString, getIdFromSlug } from '../../lib/slug';
 import { mapVenueQueryResult, Venue } from '../../lib/venue';
 
-type VenuePageProps = Venue & { events: UpcomingEvent[] };
+type VenuePageProps = Venue & { events: EventsListEvent[] };
 
 const FETCH_EVENTS_LIMIT = 20;
 

@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import { NextPage } from 'next';
 import Head from 'next/head';
 
-import EventsList, { UpcomingEvent } from '../../components/Event/EventsList';
+import EventsList, { EventsListEvent } from '../../components/Event/EventsList';
 import { useCurrentUserCalendarQuery } from '../../generated/graphql';
 import { mapEventQueryResult } from '../../lib/event';
 
@@ -43,7 +43,7 @@ const CalendarPage: NextPage = () => {
   }, [categoryFilterId]);
 
   const events = (data?.me?.events?.data || []).map((event) =>
-    mapEventQueryResult<typeof event, UpcomingEvent>(event)
+    mapEventQueryResult<typeof event, EventsListEvent>(event)
   );
 
   return (
