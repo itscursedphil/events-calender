@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { FiPlus, FiX } from 'react-icons/fi';
 import {
-  Badge,
   Box,
   Button,
   Heading,

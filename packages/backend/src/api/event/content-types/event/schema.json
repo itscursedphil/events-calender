@@ -59,6 +59,11 @@
       "target": "plugin::users-permissions.user",
       "private": true,
       "inversedBy": "createdEvents"
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title",
+      "required": false
     }
   }
 }

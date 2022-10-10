@@ -402,11 +402,13 @@ const cleanupDatabase = async (
   if (events) {
     await knex('events_attendees_links').del();
     await knex('events_category_links').del();
+    await knex('events_creator_links').del();
     await knex('events_venue_links').del();
     await knex('events').del();
   }
 
   if (venues) {
+    await knex('venues_creator_links').del();
     await knex('venues_components').del();
     await knex('venues').del();
   }
@@ -644,22 +646,25 @@ const generateEvent = async (
 const initializeSampleData = async (strapi: Strapi) => {
   const entityService = strapi.entityService as EntityService;
 
-  await cleanupDatabase(strapi);
+  // await cleanupDatabase(strapi);
+  await cleanupDatabase(strapi, { events: true, users: true, venues: false });
 
-  const venues = await generateVenues(strapi);
-  // const venues = await entityService.findMany('api::venue.venue', {});
+  // const venues = await generateVenues(strapi);
+  const venues = await entityService.findMany('api::venue.venue', {});
 
-  const events = await Promise.all(
-    eventCategoryConfigs
-      .map((category) =>
-        Array(30 + Math.floor(Math.random() * 30))
-          .fill(null)
-          .map(() => generateEvent(category.name, venues, strapi))
-      )
-      .flat()
-  );
+  const eventGenerators = eventCategoryConfigs
+    .map((category) =>
+      Array(30 + Math.floor(Math.random() * 30))
+        .fill(null)
+        .map(() => () => generateEvent(category.name, venues, strapi))
+    )
+    .flat();
 
-  console.log(events);
+  // eslint-disable-next-line no-restricted-syntax
+  for (const generator of eventGenerators) {
+    // eslint-disable-next-line no-await-in-loop
+    await generator();
+  }
 };
 
 export default initializeSampleData;

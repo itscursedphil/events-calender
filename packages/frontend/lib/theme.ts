@@ -29,7 +29,7 @@ const customTheme: ThemeOverride = {
   styles: {
     global: {
       body: {
-        background: 'gray.900',
+        background: 'gray.850',
       },
     },
   },
