@@ -19,7 +19,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
-import create from 'zustand';
+import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 import useCurrentUserStore from '../../hooks/useCurrentUser';
@@ -54,14 +54,14 @@ const UserAwareAuthActionLink: React.FC<{ onClick?: () => void }> = ({
   return (
     <Skeleton isLoaded={initialized && !loading}>
       {user ? (
-        <NextLink href="/logout" passHref>
+        <NextLink href="/logout" passHref legacyBehavior>
           <Link>
             {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
             <span onClick={onClick}>Logout</span>
           </Link>
         </NextLink>
       ) : (
-        <NextLink href="/login" passHref>
+        <NextLink href="/login" passHref legacyBehavior>
           <Link>
             {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
             <span onClick={onClick}>Login</span>
@@ -97,7 +97,7 @@ const MobileMenu = () => {
                     <Text>{user.username}</Text>
                   </Box>
                 </Stack>
-                <NextLink href="/me/calendar" passHref>
+                <NextLink href="/me/calendar" passHref legacyBehavior>
                   <Link>
                     {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
                     <span onClick={toggle}>Mein Kalender</span>
@@ -106,26 +106,26 @@ const MobileMenu = () => {
                 <Divider />
               </>
             )}
-            <NextLink href="/" passHref>
+            <NextLink href="/" passHref legacyBehavior>
               <Link>
                 {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
                 <span onClick={toggle}>Home</span>
               </Link>
             </NextLink>
-            <NextLink href="/events" passHref>
+            <NextLink href="/events" passHref legacyBehavior>
               <Link>
                 {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
                 <span onClick={toggle}>Veranstaltungen</span>
               </Link>
             </NextLink>
-            <NextLink href="/venues" passHref>
+            <NextLink href="/venues" passHref legacyBehavior>
               <Link>
                 {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
                 <span onClick={toggle}>Orte</span>
               </Link>
             </NextLink>
             <Divider />
-            <NextLink href="/events/add" passHref>
+            <NextLink href="/events/add" passHref legacyBehavior>
               <Link>
                 {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
                 <span onClick={toggle}>Event erstellen</span>
@@ -154,15 +154,15 @@ const PageNav = () => {
           display={['inline-flex', 'inline-flex', 'none']}
           onClick={toggleMenu}
         />
-        <NextLink href="/" passHref>
+        <NextLink href="/" passHref legacyBehavior>
           <Link mr={3}>Home</Link>
         </NextLink>
-        <NextLink href="/events" passHref>
+        <NextLink href="/events" passHref legacyBehavior>
           <Link mr={3} display={['none', 'none', 'inline']}>
             Veranstaltungen
           </Link>
         </NextLink>
-        <NextLink href="/venues" passHref>
+        <NextLink href="/venues" passHref legacyBehavior>
           <Link mr={3} display={['none', 'none', 'inline']}>
             Orte
           </Link>

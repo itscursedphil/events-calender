@@ -1,42 +1,31 @@
 import { factories, Strapi } from '@strapi/strapi';
-import { EntityService } from '@strapi/strapi/lib/services/entity-service';
 
 /**
  * event service.
  */
 
 // TODO: Fix typings
-export default factories.createCoreService<any>(
+export default factories.createCoreService(
   'api::event.event',
   ({ strapi }: { strapi: Strapi }) => ({
     attendingCount: async (eventId: string) => {
-      const {
-        attendees: { count: attendeesCount = 0 },
-      } = await (strapi.entityService as EntityService).findOne(
+      return strapi.entityService.count('plugin::users-permissions.user', {
+        filters: { events: { id: { $eq: eventId } } },
+      });
+    },
+    isUserAttending: async (eventId: string, userId: string) => {
+      const { attendees = [] } = await strapi.entityService.findOne(
         'api::event.event',
         eventId,
         {
           populate: {
             attendees: {
-              count: true,
+              fields: ['id'],
+              filters: { id: { $eq: userId } },
             },
           },
         }
       );
-
-      return attendeesCount;
-    },
-    isUserAttending: async (eventId: string, userId: string) => {
-      const { attendees = [] } = await (
-        strapi.entityService as EntityService
-      ).findOne('api::event.event', eventId, {
-        populate: {
-          attendees: {
-            fields: ['id'],
-            filters: { id: { $eq: userId } },
-          },
-        },
-      });
 
       return !!attendees.length;
     },

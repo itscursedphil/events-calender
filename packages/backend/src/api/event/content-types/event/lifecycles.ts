@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import nanoid from 'nanoid/generate';
+import { customAlphabet as nanoid } from 'nanoid';
 
 const alphabet =
   '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
@@ -17,7 +17,7 @@ export default {
 
     const uid = createUid();
 
-    const strapiUidService = strapi.service<any>('plugin::content-manager.uid');
+    const strapiUidService = strapi.service('plugin::content-manager.uid');
     const slug = await strapiUidService.generateUIDField({
       contentTypeUID: 'api::event.event',
       field: 'slug',

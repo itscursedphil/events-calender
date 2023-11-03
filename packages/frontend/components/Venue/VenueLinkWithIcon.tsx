@@ -13,7 +13,11 @@ const VenueLinkWithIcon: React.FC<Pick<Venue, 'id' | 'name'>> = ({
   <Stack direction="row" align="center" spacing={1}>
     <Icon as={FiMapPin} />
     <Text as="span" fontSize="sm">
-      <NextLink href={`/venues/${createSlugFromString(name, id)}`} passHref>
+      <NextLink
+        href={`/venues/${createSlugFromString(name, id)}`}
+        passHref
+        legacyBehavior
+      >
         {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
         <Link>{name}</Link>
       </NextLink>

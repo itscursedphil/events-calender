@@ -45,6 +45,7 @@ const VenuesPage: NextPage = () => {
               <NextLink
                 href={`/venues/${createSlugFromString(venue.name, venue.id)}`}
                 passHref
+                legacyBehavior
               >
                 <LinkOverlay>{venue.name}</LinkOverlay>
               </NextLink>

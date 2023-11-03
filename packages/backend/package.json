@@ -1,40 +1,40 @@
 {
-  "name": "@events-calendar/backend",
-  "private": true,
+  "name": "@observer/backend",
   "version": "0.1.0",
+  "private": true,
   "description": "A Strapi application",
+  "license": "MIT",
+  "author": {
+    "name": "A Strapi developer"
+  },
   "scripts": {
+    "build": "strapi build",
     "clean": "",
     "develop": "strapi develop",
     "start": "strapi start",
-    "build": "strapi build",
     "strapi": "strapi",
     "upgrade-dependencies": "npm-check -u"
   },
   "dependencies": {
-    "@strapi/plugin-graphql": "^4.4.3",
-    "@strapi/plugin-i18n": "^4.4.3",
-    "@strapi/plugin-users-permissions": "^4.4.3",
-    "@strapi/strapi": "^4.4.3",
-    "@types/nanoid": "^2.0.0",
+    "@strapi/plugin-graphql": "^4.15.1",
+    "@strapi/plugin-i18n": "^4.15.1",
+    "@strapi/plugin-users-permissions": "^4.15.1",
+    "@strapi/strapi": "^4.15.1",
+    "@strapi/types": "^4.15.1",
     "config": "^3.3.8",
     "cookie": "^0.5.0",
     "dayjs": "^1.11.5",
     "mysql": "^2.18.1",
-    "nanoid": "^2.1.11"
+    "nanoid": "^3.3.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^5.3.4",
+    "styled-components": "^5.3.3"
   },
-  "author": {
-    "name": "A Strapi developer"
+  "devDependencies": {
+    "@types/cookie": "^0.5.1"
   },
   "strapi": {
     "uuid": "53cd78f4-cdea-44c9-bb1c-69276eff835c"
-  },
-  "engines": {
-    "node": ">=12.x.x <=16.x.x",
-    "npm": ">=6.0.0"
-  },
-  "license": "MIT",
-  "devDependencies": {
-    "@types/cookie": "^0.5.1"
   }
 }

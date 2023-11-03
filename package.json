@@ -1,30 +1,28 @@
 {
-  "name": "events-calendar",
+  "name": "observer",
   "version": "1.0.0",
   "description": "",
+  "license": "ISC",
+  "author": "",
   "main": "index.js",
+  "workspaces": [
+    "packages/backend",
+    "packages/frontend"
+  ],
   "scripts": {
-    "clean": "lerna run clean && lerna clean --yes",
-    "prepare": "npm run clean && lerna bootstrap",
-    "develop": "lerna run develop --stream --parallel",
-    "develop:backend": "lerna run --scope @events-calendar/backend develop --stream",
-    "develop:frontend": "lerna run --scope @events-calendar/frontend develop --stream",
-    "start": "lerna run start --stream --parallel",
-    "start:backend": "lerna run --scope @events-calendar/backend start --stream",
-    "start:frontend": "lerna run --scope @events-calendar/frontend start --stream",
-    "build": "lerna run build --stream --parallel",
-    "build:backend": "lerna run --scope @events-calendar/backend build --stream",
-    "build:frontend": "lerna run --scope @events-calendar/frontend build --stream",
+    "build:backend": "npm run build --workspace=@observer/backend",
+    "build:frontend": "npm run build --workspace=@observer/frontend",
+    "develop:backend": "npm run develop --workspace=@observer/backend",
+    "develop:frontend": "npm run develop --workspace=@observer/frontend",
+    "start:backend": "npm run start --workspace=@observer/backend",
+    "start:frontend": "npm run start --workspace=@observer/frontend",
     "update-dependencies": "npm-check -u && npm-check -u packages/backend && npm-check -u packages/frontend"
   },
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
-    "@t3n/eslint-config": "^6.0.3",
-    "@t3n/eslint-config-react": "^6.0.3",
-    "@t3n/eslint-config-typescript": "^6.0.3",
-    "lerna": "^5.6.1",
+    "@t3n/eslint-config": "^6.1.0",
+    "@t3n/eslint-config-react": "^6.1.0",
+    "@t3n/eslint-config-typescript": "^6.1.0",
     "npm-check": "^6.0.1",
-    "typescript": "^4.8.4"
+    "typescript": "^5.2.2"
   }
 }

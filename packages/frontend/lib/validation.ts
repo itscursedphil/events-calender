@@ -81,6 +81,7 @@ export const registerFormValidationSchema = Yup.object().shape({
     .max(PASSWORD_MAX_LENGTH, formErrors.password.maxLength)
     .matches(PASSWORD_VERY_SECURE_REGEX, formErrors.password.secure)
     .required(formErrors.password.required),
+  passwordRepeat: Yup.string().required(),
 });
 
 export const loginFormValidationSchema = Yup.object().shape({

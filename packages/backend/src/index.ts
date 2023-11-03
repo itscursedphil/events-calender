@@ -3,7 +3,7 @@ import registerEventCategoryExtensions from './api/event-category/extensions/reg
 import registerVenueExtensions from './api/venue/extensions/register';
 import registerUploadPluginExtensions from './extensions/upload/register';
 import registerUsersPermissionsPluginExtensions from './extensions/users-permissions/register';
-import initializeSampleData from './lib/populate';
+// import initializeSampleData from './lib/populate';
 
 export default {
   /**

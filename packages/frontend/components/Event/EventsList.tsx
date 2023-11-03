@@ -57,7 +57,11 @@ const EventsListItemHeader: React.FC<
     mb={4}
   >
     <Heading as="h3" size="md" mr={2}>
-      <NextLink href={`/events/${createSlugFromString(title, id)}`} passHref>
+      <NextLink
+        href={`/events/${createSlugFromString(title, id)}`}
+        passHref
+        legacyBehavior
+      >
         <LinkOverlay>{title}</LinkOverlay>
       </NextLink>
     </Heading>

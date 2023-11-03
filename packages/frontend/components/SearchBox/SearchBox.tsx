@@ -55,7 +55,6 @@ const SearchBox: <Item>(props: SearchBoxProps<Item>) => JSX.Element = ({
     getLabelProps,
     getMenuProps,
     getInputProps,
-    getComboboxProps,
     highlightedIndex,
     getItemProps,
   } = useCombobox({
@@ -77,7 +76,7 @@ const SearchBox: <Item>(props: SearchBoxProps<Item>) => JSX.Element = ({
   return (
     <FormControl isRequired isInvalid={isTouched && !!error}>
       <FormLabel {...getLabelProps()}>{label}</FormLabel>
-      <Box {...getComboboxProps()}>
+      <Box>
         <InputGroup>
           <Input {...getInputProps()} />
           {typeof isLoading !== 'undefined' && (

@@ -1,5 +1,4 @@
 import { Strapi } from '@strapi/strapi';
-import { EntityService } from '@strapi/strapi/lib/services/entity-service';
 import dayjs from 'dayjs';
 
 type EventCategory = 'concert' | 'club' | 'theatre' | 'arts';
@@ -428,7 +427,7 @@ const cleanupDatabase = async (
 };
 
 const generateVenues = async (strapi: Strapi) => {
-  const entityService = strapi.entityService as EntityService;
+  const { entityService } = strapi;
 
   return Promise.all(
     venueConfigs.map((venue) =>
@@ -616,7 +615,7 @@ const generateEvent = async (
   venues: any[],
   strapi: Strapi
 ) => {
-  const entityService = strapi.entityService as EntityService;
+  const { entityService } = strapi;
 
   const venue = getEventVenue(venues, category);
   const title = createEventTitle(category);
@@ -639,18 +638,16 @@ const generateEvent = async (
   return entityService.create('api::event.event', {
     data: event,
   });
-
-  // return event;
 };
 
 const initializeSampleData = async (strapi: Strapi) => {
-  const entityService = strapi.entityService as EntityService;
+  // const entityService = strapi.entityService as EntityService;
 
-  // await cleanupDatabase(strapi);
-  await cleanupDatabase(strapi, { events: true, users: true, venues: false });
+  await cleanupDatabase(strapi);
+  await cleanupDatabase(strapi, { events: true, users: true, venues: true });
 
-  // const venues = await generateVenues(strapi);
-  const venues = await entityService.findMany('api::venue.venue', {});
+  const venues = await generateVenues(strapi);
+  // const venues = await entityService.findMany('api::venue.venue', {});
 
   const eventGenerators = eventCategoryConfigs
     .map((category) =>

@@ -23,7 +23,7 @@ const LoginPage: NextPage = () => {
         <Text textAlign="center">
           Noch kein Account?
           <br />
-          <NextLink href="/register" passHref>
+          <NextLink href="/register" passHref legacyBehavior>
             {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
             <Link textDecor="underline">Hier registrieren</Link>
           </NextLink>
