@@ -85,6 +85,7 @@ export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
     VenuePathsQueryVariables
   >({
     query: VenuePathsDocument,
+    fetchPolicy: 'network-only',
   });
 
   if (!data.venues?.data) throw new Error('Error fetching paths for venues');
@@ -122,6 +123,7 @@ export const getStaticProps: GetStaticProps<
       variables: {
         id,
       },
+      fetchPolicy: 'network-only',
     });
 
     if (!data.venue?.data?.id || !data.venue.data.attributes)
@@ -142,6 +144,7 @@ export const getStaticProps: GetStaticProps<
           venues: [id],
           limit: FETCH_EVENTS_LIMIT,
         },
+        fetchPolicy: 'network-only',
       });
 
       if (!data.events?.data) return [];

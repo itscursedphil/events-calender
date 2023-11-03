@@ -64,6 +64,7 @@ export const getStaticProps: GetStaticProps = async () => {
     const fetchEventCategories = () =>
       apolloClient.query<EventCategoriesQuery>({
         query: EventCategoriesDocument,
+        fetchPolicy: 'network-only',
       });
 
     const fetchEvents = () => {
@@ -79,6 +80,7 @@ export const getStaticProps: GetStaticProps = async () => {
           limit: FETCH_EVENTS_LIMIT,
           startDate,
         },
+        fetchPolicy: 'network-only',
       });
     };
 

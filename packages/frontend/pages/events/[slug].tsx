@@ -193,6 +193,7 @@ export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
         limit: 100,
         startDate,
       },
+      fetchPolicy: 'network-only',
     });
 
     if (!data.events?.data) throw new Error('Error fetching event paths');
@@ -232,6 +233,7 @@ export const getStaticProps: GetStaticProps<Event, { slug: string }> = async (
     variables: {
       id,
     },
+    fetchPolicy: 'network-only',
   });
 
   const eventData = data.event?.data;

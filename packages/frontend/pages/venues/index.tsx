@@ -75,6 +75,7 @@ export const getStaticProps: GetStaticProps = async () => {
       variables: {
         limit: initialQueryLimit,
       },
+      fetchPolicy: 'network-only',
     });
 
     return { ...addApolloState(apolloClient, { props: {} }) };
