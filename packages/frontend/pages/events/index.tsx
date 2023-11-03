@@ -19,13 +19,7 @@ const FETCH_EVENTS_LIMIT = 20;
 
 const EventsPage: NextPage = () => {
   const [categoryFilterId, setCategoryFilterId] = useState<string | null>(null);
-  const {
-    events,
-    isLoading,
-    attendeesCountsIsLoading,
-    hasMore,
-    handleFetchMore,
-  } = useEventsList({
+  const { events, isLoading, hasMore, handleFetchMore } = useEventsList({
     categories: categoryFilterId ? [categoryFilterId] : undefined,
     limit: FETCH_EVENTS_LIMIT,
   });
@@ -42,7 +36,6 @@ const EventsPage: NextPage = () => {
         <EventsList
           events={events}
           isEmpty={!isLoading && !events.length}
-          attendeesCountsIsLoading={attendeesCountsIsLoading}
           showSkeleton={hasMore}
           onCategoryChange={(id) => {
             setCategoryFilterId(id);

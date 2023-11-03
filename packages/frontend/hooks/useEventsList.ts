@@ -2,9 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import dayjs from 'dayjs';
 
 import {
-  EventsAttendeesCountsQuery,
   UpcomingEventsQuery,
-  useEventsAttendeesCountsQuery,
   useUpcomingEventsQuery,
 } from '../generated/graphql';
 import { Event, EventCategory, mapEventQueryResult } from '../lib/event';
@@ -13,13 +11,7 @@ import { Venue } from '../lib/venue';
 export interface EventsListEvent
   extends Pick<
     Event,
-    | 'id'
-    | 'title'
-    | 'description'
-    | 'startDate'
-    | 'endDate'
-    | 'doorsTime'
-    | 'attendeesCount'
+    'id' | 'title' | 'description' | 'startDate' | 'endDate' | 'doorsTime'
   > {
   category: Pick<EventCategory, 'id' | 'name' | 'slug'>;
   venue: Pick<Venue, 'id' | 'name'>;
@@ -27,24 +19,10 @@ export interface EventsListEvent
 
 // TODO: Fetch event attendees count client side
 
-const mapEventsQueryResults = (
-  data?: UpcomingEventsQuery,
-  attendeesCountsData?: EventsAttendeesCountsQuery
-) =>
-  (data?.events?.data || []).map((eventResult) => {
-    const event = mapEventQueryResult<typeof eventResult, EventsListEvent>(
-      eventResult
-    );
-
-    const eventAtteendeesCount = (attendeesCountsData?.events?.data || []).find(
-      (eventAttendeesCountResult) => eventAttendeesCountResult.id === event.id
-    );
-
-    return {
-      ...event,
-      attendeesCount: eventAtteendeesCount?.attributes?.attendeesCount || 0,
-    };
-  });
+const mapEventsQueryResults = (data?: UpcomingEventsQuery) =>
+  (data?.events?.data || []).map((eventResult) =>
+    mapEventQueryResult<typeof eventResult, EventsListEvent>(eventResult)
+  );
 
 const useEventsList = ({
   categories,
@@ -58,7 +36,6 @@ const useEventsList = ({
   events: EventsListEvent[];
   total: number;
   isLoading: boolean;
-  attendeesCountsIsLoading: boolean;
   hasMore: boolean;
   handleFetchMore: () => Promise<void>;
 } => {
@@ -78,44 +55,20 @@ const useEventsList = ({
     },
     fetchPolicy: 'cache-and-network',
   });
-  const {
-    data: attendeesCountsData,
-    fetchMore: fetchMoreAttendeesCounts,
-    loading: attendeesCountsIsLoading,
-  } = useEventsAttendeesCountsQuery({
-    variables: {
-      from: 0,
-      limit,
-      startDate: dayjs().startOf('day').toISOString(),
-      categories,
-      venues,
-    },
-    fetchPolicy: 'cache-and-network',
-  });
 
   const { total = 0 } = data?.events?.meta.pagination || {};
   const hasMore = nextOffset < total;
 
   const handleFetchMore = useCallback(async () => {
     if (hasMore && !isLoading) {
-      await Promise.all([
-        fetchMore({ variables: { from: nextOffset } }),
-        fetchMoreAttendeesCounts({ variables: { from: nextOffset } }),
-      ]);
+      await fetchMore({ variables: { from: nextOffset } });
       setNextOffset(nextOffset + limit);
     }
-  }, [
-    hasMore,
-    isLoading,
-    fetchMore,
-    nextOffset,
-    fetchMoreAttendeesCounts,
-    limit,
-  ]);
+  }, [hasMore, isLoading, fetchMore, nextOffset, limit]);
 
   const events = useMemo(
-    () => mapEventsQueryResults(data || previousData, attendeesCountsData),
-    [attendeesCountsData, data, previousData]
+    () => mapEventsQueryResults(data || previousData),
+    [data, previousData]
   );
 
   const categoriesId = JSON.stringify(categories);
@@ -128,7 +81,6 @@ const useEventsList = ({
   return {
     events,
     isLoading,
-    attendeesCountsIsLoading,
     total,
     hasMore,
     handleFetchMore,

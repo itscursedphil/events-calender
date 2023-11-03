@@ -18,7 +18,6 @@ import { EventsListEvent } from '../../hooks/useEventsList';
 import { createSlugFromString } from '../../lib/slug';
 import { sortEventsByDay } from '../../lib/sort';
 import { VenueLinkWithIcon } from '../Venue';
-import EventAttendeesCountWithIcon from './EventAttendeesCountWithIcon';
 import EventCategoryBadge from './EventCategoryBadge';
 import EventStartDateWithIcon from './EventStartDateWithIcon';
 
@@ -72,48 +71,32 @@ const EventsListItemHeader: React.FC<
 );
 
 const EventsListItemMeta: React.FC<
-  Pick<EventsListEvent, 'startDate' | 'venue' | 'attendeesCount'> & {
-    attendeesCountIsLoading?: boolean;
-  }
-> = ({ startDate, venue, attendeesCount, attendeesCountIsLoading }) => (
+  Pick<EventsListEvent, 'startDate' | 'venue'>
+> = ({ startDate, venue }) => (
   <Box display="flex" justifyContent="space-between">
     <Stack direction="row" spacing={4}>
       <EventStartDateWithIcon startDate={startDate} />
       <VenueLinkWithIcon {...venue} />
     </Stack>
-    <EventAttendeesCountWithIcon
-      count={attendeesCount}
-      isLoading={attendeesCountIsLoading}
-    />
   </Box>
 );
 
-const EventsListItem: React.FC<
-  EventsListEvent & {
-    attendeesCountIsLoading?: boolean;
-  }
-> = ({ attendeesCountIsLoading, ...event }) => (
+const EventsListItem: React.FC<EventsListEvent> = (event) => (
   <LinkBox>
     <EventsListItemHeader {...event} />
-    <EventsListItemMeta
-      {...event}
-      attendeesCountIsLoading={attendeesCountIsLoading}
-    />
+    <EventsListItemMeta {...event} />
   </LinkBox>
 );
 
-// TODO: Load event attendees count client side instead of server side
 const EventsList: React.FC<{
   events: EventsListEvent[];
   isEmpty?: boolean;
-  attendeesCountsIsLoading?: boolean;
   showSkeleton?: boolean;
   onCategoryChange?: (id: string) => void;
   onSkeletonIntersecting?: () => void;
 }> = ({
   events,
   isEmpty,
-  attendeesCountsIsLoading,
   showSkeleton,
   onCategoryChange,
   onSkeletonIntersecting,
@@ -162,11 +145,7 @@ const EventsList: React.FC<{
             <Divider my={4} />
             <Stack divider={<Divider />} spacing={4}>
               {eventsForDay.map((event) => (
-                <EventsListItem
-                  {...event}
-                  attendeesCountIsLoading={attendeesCountsIsLoading}
-                  key={event.id}
-                />
+                <EventsListItem {...event} key={event.id} />
               ))}
             </Stack>
           </Box>

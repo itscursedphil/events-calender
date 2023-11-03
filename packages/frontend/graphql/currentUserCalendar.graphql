@@ -24,7 +24,6 @@ query CurrentUserCalendar(
           startDate
           endDate
           doorsTime
-          attendeesCount
           venue {
             data {
               id
